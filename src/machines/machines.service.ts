@@ -1,21 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from "@nestjs/common";
 import {
   CreateMachineDto,
   UpdateMachineDto,
   FindMachineDto,
   MachineDto,
-} from './dto';
-import { InjectModel } from '@nestjs/sequelize';
-import { MachineEntity } from './entities/machine.entity';
-import { Op } from 'sequelize';
-import { AppAbility } from 'src/casl/casl-ability.factory/casl-ability.factory';
-import { ACTIONS } from 'src/casl/enums';
+} from "./dto";
+import { InjectModel } from "@nestjs/sequelize";
+import { MachineModel } from "./model/machine.model";
+import { Op } from "sequelize";
+import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
+import { ACTIONS } from "src/casl/enum";
 
 @Injectable()
 export class MachinesService {
   constructor(
-    @InjectModel(MachineEntity)
-    private machineEntity: typeof MachineEntity,
+    @InjectModel(MachineModel)
+    private machineEntity: typeof MachineModel
   ) {}
 
   async create(dto: CreateMachineDto) {
@@ -43,10 +43,10 @@ export class MachinesService {
   async findOne(id: number, ability: AppAbility) {
     const machine = await this.machineEntity.findByPk(id);
     if (!machine) {
-      throw new NotFoundException('Machine not found');
+      throw new NotFoundException("Machine not found");
     }
     if (!ability.can(ACTIONS.READ, machine)) {
-      throw new NotFoundException('Machine not found');
+      throw new NotFoundException("Machine not found");
     }
     return new MachineDto(machine);
   }
@@ -54,10 +54,10 @@ export class MachinesService {
   async update(id: number, dto: UpdateMachineDto, ability: AppAbility) {
     const machine = await this.machineEntity.findByPk(id);
     if (!machine) {
-      throw new NotFoundException('Machine not found');
+      throw new NotFoundException("Machine not found");
     }
     if (!ability.can(ACTIONS.UPDATE, machine)) {
-      throw new NotFoundException('Machine not found');
+      throw new NotFoundException("Machine not found");
     }
     Object.keys(dto).forEach((key) => {
       if (!ability.can(ACTIONS.UPDATE, machine, key)) {
@@ -71,10 +71,10 @@ export class MachinesService {
   async remove(id: number, ability: AppAbility) {
     const machine = await this.machineEntity.findByPk(id);
     if (!machine) {
-      throw new NotFoundException('Machine not found');
+      throw new NotFoundException("Machine not found");
     }
     if (!ability.can(ACTIONS.DELETE, machine)) {
-      throw new NotFoundException('Machine not found');
+      throw new NotFoundException("Machine not found");
     }
     await machine.destroy();
     return new MachineDto(machine);

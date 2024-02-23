@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UsersController } from './users.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { UserEntity } from './entities/user.entity';
-import { CaslModule } from 'src/casl/casl.module';
+import { Module } from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { UsersController } from "./users.controller";
+import { SequelizeModule } from "@nestjs/sequelize";
+import { UserModel } from "./model/user.model";
+import { CaslModule } from "src/casl/casl.module";
 
 @Module({
-  imports: [SequelizeModule.forFeature([UserEntity]), CaslModule],
+  imports: [SequelizeModule.forFeature([UserModel]), CaslModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService, SequelizeModule],

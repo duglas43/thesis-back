@@ -1,19 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import {
   CreateAddressDto,
   UpdateAddressDto,
   AddressDto,
   FindAddressDto,
-} from './dto';
-import { AddressEntity } from './entities/address.entity';
-import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
+} from "./dto";
+import { AddressModel } from "./model/address.model";
+import { InjectModel } from "@nestjs/sequelize";
+import { Op } from "sequelize";
 
 @Injectable()
 export class AddressesService {
   constructor(
-    @InjectModel(AddressEntity)
-    private addressEntity: typeof AddressEntity,
+    @InjectModel(AddressModel)
+    private addressEntity: typeof AddressModel
   ) {}
 
   async create(dto: CreateAddressDto) {

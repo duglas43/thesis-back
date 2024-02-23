@@ -2,20 +2,20 @@ import {
   Injectable,
   ForbiddenException,
   NotFoundException,
-} from '@nestjs/common';
-import { CreateOrderDto, UpdateOrderDto, OrderDto, FindOrderDto } from './dto';
-import { OrderEntity } from './entities/order.entity';
-import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
-import { AppAbility } from 'src/casl/casl-ability.factory/casl-ability.factory';
-import { ACTIONS } from 'src/casl/enums';
-import { OrderMachineEntity } from './entities/orderMachine.entity';
+} from "@nestjs/common";
+import { CreateOrderDto, UpdateOrderDto, OrderDto, FindOrderDto } from "./dto";
+import { OrderModel } from "./model/order.model";
+import { InjectModel } from "@nestjs/sequelize";
+import { Op } from "sequelize";
+import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
+import { ACTIONS } from "src/casl/enum";
+import { OrderMachineModel } from "./model/order-machine.model";
 
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectModel(OrderEntity)
-    private orderEntity: typeof OrderEntity,
+    @InjectModel(OrderModel)
+    private orderEntity: typeof OrderModel
   ) {}
 
   async create(dto: CreateOrderDto) {
@@ -44,9 +44,6 @@ export class OrdersService {
     const order = await this.orderEntity.findByPk(id);
     if (!order) {
       throw new NotFoundException();
-    }
-    if (!ability.can(ACTIONS.READ, order)) {
-      throw new ForbiddenException();
     }
     return new OrderDto(order);
   }
@@ -82,16 +79,16 @@ export class OrdersService {
   async addMachine(
     id: number,
     { machineId, count }: { machineId: number; count: number },
-    ability: AppAbility,
+    ability: AppAbility
   ) {
     const order = await this.orderEntity.findByPk(id);
     if (!order) {
       throw new NotFoundException();
     }
-    if (!ability.can(ACTIONS.CREATE, OrderMachineEntity)) {
+    if (!ability.can(ACTIONS.CREATE, OrderMachineModel)) {
       throw new ForbiddenException();
     }
-    await order.$add('machines', machineId, { through: { count } });
+    await order.$add("machines", machineId, { through: { count } });
     return new OrderDto(order);
   }
 
@@ -100,10 +97,10 @@ export class OrdersService {
     if (!order) {
       throw new NotFoundException();
     }
-    if (!ability.can(ACTIONS.DELETE, OrderMachineEntity)) {
+    if (!ability.can(ACTIONS.DELETE, OrderMachineModel)) {
       throw new ForbiddenException();
     }
-    await order.$remove('machines', machineId);
+    await order.$remove("machines", machineId);
     return new OrderDto(order);
   }
 }

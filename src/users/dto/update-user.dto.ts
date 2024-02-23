@@ -5,10 +5,9 @@ import {
   IsPhoneNumber,
   IsInt,
   IsEnum,
-} from 'class-validator';
-import { Transform } from 'class-transformer';
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { LANGUAGES } from '../enums';
+} from "class-validator";
+import { ApiPropertyOptional } from "@nestjs/swagger";
+import { LANGUAGES } from "../enum";
 
 export class UpdateUserDto {
   @ApiPropertyOptional()
@@ -48,7 +47,6 @@ export class UpdateUserDto {
 
   @ApiPropertyOptional({})
   @IsOptional()
-  @Transform(({ value }) => value?.map((id) => parseInt(id)) || null)
   @IsInt({ each: true })
   roleIds: number[] | null;
 }

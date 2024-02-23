@@ -8,32 +8,31 @@ import {
   Query,
   Delete,
   ParseIntPipe,
-} from '@nestjs/common';
-import { AddressesService } from './addresses.service';
+} from "@nestjs/common";
+import { AddressesService } from "./addresses.service";
 import {
   CreateAddressDto,
   UpdateAddressDto,
   AddressDto,
   FindAddressDto,
-} from './dto';
+} from "./dto";
 import {
   ApiTags,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiBearerAuth,
-} from '@nestjs/swagger';
+} from "@nestjs/swagger";
 import {
-  CustomApiUnauthorizedResponse,
-  CustomApiForbiddenResponse,
-  CustomApiNotFoundResponse,
-} from 'src/types';
-
+  AppApiUnauthorizedResponse,
+  AppApiNotFoundResponse,
+  AppApiForbiddenResponse,
+} from "src/common/swagger/decorators";
 @ApiBearerAuth()
-@CustomApiUnauthorizedResponse()
-@CustomApiForbiddenResponse()
-@CustomApiNotFoundResponse()
-@ApiTags('addresses')
-@Controller('addresses')
+@AppApiUnauthorizedResponse()
+@AppApiForbiddenResponse()
+@AppApiNotFoundResponse()
+@ApiTags("addresses")
+@Controller("addresses")
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 
@@ -49,24 +48,24 @@ export class AddressesController {
     return this.addressesService.findAll(findAddressDto);
   }
 
-  @Get(':id')
+  @Get(":id")
   @ApiOkResponse({ type: AddressDto })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param("id", ParseIntPipe) id: number) {
     return this.addressesService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @ApiOkResponse({ type: AddressDto })
   update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateAddressDto: UpdateAddressDto,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() updateAddressDto: UpdateAddressDto
   ) {
     return this.addressesService.update(id, updateAddressDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @ApiOkResponse({ type: AddressDto })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param("id", ParseIntPipe) id: number) {
     return this.addressesService.remove(id);
   }
 }

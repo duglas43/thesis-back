@@ -1,16 +1,13 @@
-import { Module } from '@nestjs/common';
-import { DetailsService } from './details.service';
-import { DetailsController } from './details.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { DetailEntity } from './entities/detail.entity';
-import { ParamEntity } from 'src/params/entities/param.entity';
-import { CaslModule } from 'src/casl/casl.module';
+import { Module } from "@nestjs/common";
+import { DetailsService } from "./details.service";
+import { DetailsController } from "./details.controller";
+import { SequelizeModule } from "@nestjs/sequelize";
+import { DetailModel } from "./model/detail.model";
+import { ParamModel } from "src/params/model/param.model";
+import { CaslModule } from "src/casl/casl.module";
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([DetailEntity, ParamEntity]),
-    CaslModule,
-  ],
+  imports: [SequelizeModule.forFeature([DetailModel, ParamModel]), CaslModule],
   controllers: [DetailsController],
   providers: [DetailsService],
 })

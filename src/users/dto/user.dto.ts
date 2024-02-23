@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { LANGUAGES } from '../enums';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { LANGUAGES } from "../enum";
 
 export class UserDto {
   @ApiProperty()

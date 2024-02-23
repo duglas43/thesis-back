@@ -8,27 +8,27 @@ import {
   Query,
   Delete,
   ParseIntPipe,
-} from '@nestjs/common';
-import { ParamsService } from './params.service';
-import { CreateParamDto, UpdateParamDto, ParamDto, FindParamDto } from './dto';
+} from "@nestjs/common";
+import { ParamsService } from "./params.service";
+import { CreateParamDto, UpdateParamDto, ParamDto, FindParamDto } from "./dto";
 import {
   ApiTags,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiBearerAuth,
-} from '@nestjs/swagger';
+} from "@nestjs/swagger";
 import {
-  CustomApiUnauthorizedResponse,
-  CustomApiForbiddenResponse,
-  CustomApiNotFoundResponse,
-} from 'src/types';
+  AppApiUnauthorizedResponse,
+  AppApiNotFoundResponse,
+  AppApiForbiddenResponse,
+} from "src/common/swagger/decorators";
 
 @ApiBearerAuth()
-@CustomApiUnauthorizedResponse()
-@CustomApiForbiddenResponse()
-@CustomApiNotFoundResponse()
-@ApiTags('params')
-@Controller('params')
+@AppApiUnauthorizedResponse()
+@AppApiForbiddenResponse()
+@AppApiNotFoundResponse()
+@ApiTags("params")
+@Controller("params")
 export class ParamsController {
   constructor(private readonly paramsService: ParamsService) {}
 
@@ -44,24 +44,24 @@ export class ParamsController {
     return this.paramsService.findAll(findParamDto);
   }
 
-  @Get(':id')
+  @Get(":id")
   @ApiOkResponse({ type: ParamDto })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param("id", ParseIntPipe) id: number) {
     return this.paramsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @ApiOkResponse({ type: ParamDto })
   update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateParamDto: UpdateParamDto,
+    @Param("id", ParseIntPipe) id: number,
+    @Body() updateParamDto: UpdateParamDto
   ) {
     return this.paramsService.update(id, updateParamDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @ApiOkResponse({ type: ParamDto })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param("id", ParseIntPipe) id: number) {
     return this.paramsService.remove(id);
   }
 }

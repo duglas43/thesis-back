@@ -1,95 +1,204 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import {
   MongoAbility,
   createMongoAbility,
   AbilityBuilder,
   InferSubjects,
   ExtractSubjectType,
-} from '@casl/ability';
-import { ROLES } from 'src/roles/enums';
-import { UserEntity } from 'src/users/entities';
-import { OrderEntity } from 'src/orders/entities';
-import { RoleEntity } from 'src/roles/entities/role.entity';
-import { AddressEntity } from 'src/addresses/entities';
-import { MachineEntity } from 'src/machines/entities';
-import { DetailEntity } from 'src/details/entities';
-import { ParamEntity } from 'src/params/entities/param.entity';
-import { DetailParamEntity } from 'src/details/entities';
-import { OrderMachineEntity } from 'src/orders/entities/orderMachine.entity';
-import { MachineDetailEntity } from 'src/machines/entities';
-import { UserRoleEntity } from 'src/users/entities';
-import { ACTIONS } from '../enums';
+} from "@casl/ability";
+import { ACTIONS } from "../enum";
+import { ROLES } from "src/roles/enum";
+import { InjectModel } from "@nestjs/sequelize";
+import { RoleModel } from "src/roles/model/role.model";
+import { UserRoleModel, UserModel, UserPermissionModel } from "src/users/model";
+import { AddressModel } from "src/addresses/model";
+import { OrderModel } from "src/orders/model/order.model";
+import { DetailModel } from "src/details/model/detail.model";
+import { OrderMachineModel } from "src/orders/model/order-machine.model";
+import { MachineModel } from "src/machines/model/machine.model";
+import { MachineDetailModel } from "src/machines/model/machine-detail.model";
+import { ParamModel } from "src/params/model/param.model";
+import { DetailParamModel } from "src/details/model/detail-param.model";
+import { PermissionModel } from "src/permissions/model";
 
 type Subjects =
   | InferSubjects<
-      | typeof UserEntity
-      | typeof OrderEntity
-      | typeof RoleEntity
-      | typeof AddressEntity
-      | typeof MachineEntity
-      | typeof DetailEntity
-      | typeof ParamEntity
-      | typeof DetailParamEntity
-      | typeof OrderMachineEntity
-      | typeof MachineDetailEntity
-      | typeof UserRoleEntity
+      | typeof UserModel
+      | typeof UserRoleModel
+      | typeof RoleModel
+      | typeof AddressModel
+      | typeof OrderModel
+      | typeof DetailModel
+      | typeof OrderMachineModel
+      | typeof MachineModel
+      | typeof MachineDetailModel
+      | typeof ParamModel
+      | typeof DetailParamModel
+      | typeof PermissionModel
+      | typeof UserPermissionModel
     >
-  | 'all';
+  | "all";
 
-export type AppAbility = MongoAbility<[ACTIONS, any]>;
+export type AppAbility = MongoAbility<[ACTIONS, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
-  createForUser(user: UserEntity) {
-    const { can, cannot, build } = new AbilityBuilder<AppAbility>(
-      createMongoAbility,
-    );
-    user.roles.forEach((role) => {
-      switch (role.name) {
-        case ROLES.ADMIN:
-          can(ACTIONS.MANAGE, 'all');
-        case ROLES.ENGINEER:
-          can(ACTIONS.MANAGE, UserEntity);
-          can(ACTIONS.MANAGE, DetailEntity);
-          can(ACTIONS.MANAGE, ParamEntity);
-          can(ACTIONS.MANAGE, DetailParamEntity);
-          can(ACTIONS.MANAGE, MachineEntity);
-          can(ACTIONS.MANAGE, MachineDetailEntity);
-        case ROLES.CLIENT:
-          can(ACTIONS.UPDATE, OrderEntity, ['name', 'comment']);
-          can(ACTIONS.MANAGE, AddressEntity);
-          can(ACTIONS.CREATE, OrderEntity);
-          can(ACTIONS.READ, OrderEntity);
-          can(ACTIONS.UPDATE, OrderEntity);
-          can(ACTIONS.DELETE, OrderEntity);
-          can(ACTIONS.READ, MachineEntity);
-          can(ACTIONS.READ, DetailEntity);
-          can(ACTIONS.READ, ParamEntity);
-          break;
-        case ROLES.HR:
-          can(ACTIONS.MANAGE, UserEntity);
-          cannot(ACTIONS.READ, UserEntity, { id: 1 });
-          break;
-        case ROLES.MANAGER:
-          can(ACTIONS.MANAGE, UserEntity);
-          can(ACTIONS.CREATE, OrderEntity);
-          can(ACTIONS.READ, OrderEntity);
-          can(ACTIONS.UPDATE, OrderEntity, [
-            'statusCode',
-            'responsibleId',
-            'totalPrice',
-          ]);
-          can(ACTIONS.DELETE, OrderEntity);
-          can(ACTIONS.CREATE, MachineEntity);
-          can(ACTIONS.READ, DetailEntity);
-          can(ACTIONS.READ, ParamEntity);
-          break;
-      }
-    });
+  constructor(
+    @InjectModel(UserModel)
+    private readonly userModel: typeof UserModel
+  ) {}
 
+  async createForUser(user: UserModel) {
+    const { can, cannot, build, rules } = new AbilityBuilder<AppAbility>(
+      createMongoAbility
+    );
+    const extendedUser = await this.userModel.findByPk(user.id, {
+      include: [
+        {
+          association: "roles",
+          include: [
+            {
+              association: "permissions",
+              include: ["fields", "conditions", "subject"],
+            },
+          ],
+        },
+        {
+          association: "permissions",
+          include: ["fields", "conditions", "subject"],
+        },
+      ],
+    });
+    const userPermissions = extendedUser.permissions;
+    const userRoles = extendedUser.roles;
+    const userRolesPermissions = [];
+    for (const role of userRoles) {
+      userRolesPermissions.push(...role.permissions);
+    }
+    const sortedUserRolesPermissions =
+      this.sortPermissions(userRolesPermissions);
+    const sortedUserPermissions = this.sortPermissions(userPermissions);
+
+    cannot(ACTIONS.MANAGE, "all");
+    sortedUserRolesPermissions.forEach((permission) => {
+      const fields = permission.fields.map((field) => field.name);
+      const subject = permission.subject.name as any;
+      rules.push({
+        action: permission.action,
+        subject,
+        conditions: PermissionModel.parseCondition(permission.conditions, user),
+        fields: fields.length > 0 ? fields : undefined,
+        inverted: !permission.modality,
+        reason: permission.reason,
+      });
+    });
+    sortedUserPermissions.forEach((permission) => {
+      const fields = permission.fields.map((field) => field.name);
+      const subject = permission.subject.name as any;
+      rules.push({
+        action: permission.action,
+        subject,
+        conditions: PermissionModel.parseCondition(permission.conditions, user),
+        fields: fields.length > 0 ? fields : undefined,
+        inverted: !permission.modality,
+        reason: permission.reason,
+      });
+    });
+    if (userRoles.some((role) => role.name === ROLES.ADMIN)) {
+      can(ACTIONS.MANAGE, "all");
+    }
     return build({
       detectSubjectType: (item) =>
         item.constructor as ExtractSubjectType<Subjects>,
     });
+  }
+
+  /**
+   * @description
+   * Sort permissions by modality and fields/conditions. Here is the priority of permissions:
+   * 1. Permissions without conditions and fields and with modality = true (can permissions to db table)
+   * 2. Permissions without conditions and fields and with modality = false (cannot permissions to db table)
+   * 3. Permissions with conditions and with modality = true (can permissions to entries)
+   * 4. Permissions with conditions and with modality = false (cannot permissions to entries)
+   * 5. Permissions with fields and with modality = true (can permissions to fields)
+   * 6. Permissions with fields and with modality = false (cannot permissions to fields)
+   * The higher the permission in the list, the lower the priority
+   *
+   * You can think about it in this way:
+   *
+   * sortPermissions(permissions: PermissionModel[]) {
+   *
+   * const canDBTable = permissions.filter(
+   *   (permission) =>
+   *     permission.conditions.length === 0 &&
+   *     permission.fields.length === 0 &&
+   *     permission.modality,
+   * );
+   *
+   * const cannotDBTable = permissions.filter(
+   *   (permission) =>
+   *     permission.conditions.length === 0 &&
+   *     permission.fields.length === 0 &&
+   *     !permission.modality,
+   * );
+   *
+   * const canEntries = permissions.filter(
+   *   (permission) => permission.conditions.length > 0 && permission.modality,
+   * );
+   *
+   * const cannotEntries = permissions.filter(
+   *   (permission) => permission.conditions.length > 0 && !permission.modality,
+   * );
+   *
+   * const canField = permissions.filter(
+   *   (permission) => permission.fields.length > 0 && permission.modality,
+   * );
+   *
+   * const cannotField = permissions.filter(
+   *   (permission) => permission.fields.length > 0 && !permission.modality,
+   * );
+   *
+   * return [
+   *   ...canDBTable,
+   *   ...cannotDBTable,
+   *   ...canEntries,
+   *   ...cannotEntries,
+   *   ...canField,
+   *   ...cannotField,
+   * ];
+   *}
+   * @param permissions: PermissionModel[]
+   * @returns sortedPermissions: PermissionModel[]
+   */
+
+  private sortPermissions(permissions: PermissionModel[]): PermissionModel[] {
+    const sortedPermissions = [];
+
+    permissions.forEach((permission) => {
+      if (
+        permission.conditions.length === 0 &&
+        permission.fields.length === 0
+      ) {
+        if (permission.modality) {
+          sortedPermissions.unshift(permission);
+        } else {
+          sortedPermissions.push(permission);
+        }
+      } else if (permission.conditions.length > 0) {
+        if (permission.modality) {
+          sortedPermissions.unshift(permission);
+        } else {
+          sortedPermissions.push(permission);
+        }
+      } else {
+        if (permission.modality) {
+          sortedPermissions.unshift(permission);
+        } else {
+          sortedPermissions.push(permission);
+        }
+      }
+    });
+
+    return sortedPermissions;
   }
 }

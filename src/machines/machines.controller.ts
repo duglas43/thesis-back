@@ -8,42 +8,42 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-} from '@nestjs/common';
-import { MachinesService } from './machines.service';
+} from "@nestjs/common";
+import { MachinesService } from "./machines.service";
 import {
   ApiTags,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiBearerAuth,
-} from '@nestjs/swagger';
+} from "@nestjs/swagger";
 import {
   CreateMachineDto,
   UpdateMachineDto,
   MachineDto,
   FindMachineDto,
-} from './dto';
+} from "./dto";
 import {
-  CustomApiUnauthorizedResponse,
-  CustomApiForbiddenResponse,
-  CustomApiNotFoundResponse,
-} from 'src/types';
-import { CheckPolicies } from 'src/casl/decorators';
-import { AppAbility } from 'src/casl/casl-ability.factory/casl-ability.factory';
-import { GetAbility } from 'src/casl/decorators';
-import { ACTIONS } from 'src/casl/enums';
-import { MachineEntity } from './entities/machine.entity';
+  AppApiUnauthorizedResponse,
+  AppApiNotFoundResponse,
+  AppApiForbiddenResponse,
+} from "src/common/swagger/decorators";
+import { CheckPolicies } from "src/casl/decorator";
+import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
+import { GetAbility } from "src/casl/decorator";
+import { ACTIONS } from "src/casl/enum";
+import { MachineModel } from "./model/machine.model";
 
 @ApiBearerAuth()
-@CustomApiUnauthorizedResponse()
-@CustomApiForbiddenResponse()
-@CustomApiNotFoundResponse()
-@ApiTags('machines')
-@Controller('machines')
+@AppApiUnauthorizedResponse()
+@AppApiForbiddenResponse()
+@AppApiNotFoundResponse()
+@ApiTags("machines")
+@Controller("machines")
 export class MachinesController {
   constructor(private readonly machinesService: MachinesService) {}
 
   @Post()
-  @CheckPolicies((ability) => ability.can(ACTIONS.CREATE, MachineEntity))
+  @CheckPolicies((ability) => ability.can(ACTIONS.CREATE, MachineModel))
   @ApiCreatedResponse({ type: MachineDto })
   create(@Body() createMachineDto: CreateMachineDto) {
     return this.machinesService.create(createMachineDto);
@@ -53,35 +53,35 @@ export class MachinesController {
   @ApiOkResponse({ type: MachineDto, isArray: true })
   findAll(
     @Query() findMachineDto: FindMachineDto,
-    @GetAbility() ability: AppAbility,
+    @GetAbility() ability: AppAbility
   ) {
     return this.machinesService.findAll(findMachineDto, ability);
   }
 
-  @Get(':id')
+  @Get(":id")
   @ApiOkResponse({ type: MachineDto })
   findOne(
-    @Param('id', ParseIntPipe) id: number,
-    @GetAbility() ability: AppAbility,
+    @Param("id", ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility
   ) {
     return this.machinesService.findOne(id, ability);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   @ApiOkResponse({ type: MachineDto })
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
     @Body() updateMachineDto: UpdateMachineDto,
-    @GetAbility() ability: AppAbility,
+    @GetAbility() ability: AppAbility
   ) {
     return this.machinesService.update(id, updateMachineDto, ability);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @ApiOkResponse({ type: MachineDto })
   remove(
-    @Param('id', ParseIntPipe) id: number,
-    @GetAbility() ability: AppAbility,
+    @Param("id", ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility
   ) {
     return this.machinesService.remove(id, ability);
   }

@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { CreateParamDto, UpdateParamDto, ParamDto, FindParamDto } from './dto';
-import { ParamEntity } from './entities/param.entity';
-import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
+import { Injectable } from "@nestjs/common";
+import { CreateParamDto, UpdateParamDto, ParamDto, FindParamDto } from "./dto";
+import { ParamModel } from "./model/param.model";
+import { InjectModel } from "@nestjs/sequelize";
+import { Op } from "sequelize";
 
 @Injectable()
 export class ParamsService {
   constructor(
-    @InjectModel(ParamEntity)
-    private paramEntity: typeof ParamEntity,
+    @InjectModel(ParamModel)
+    private paramEntity: typeof ParamModel
   ) {}
 
   async create(dto: CreateParamDto) {

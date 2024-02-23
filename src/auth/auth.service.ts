@@ -2,21 +2,21 @@ import {
   Injectable,
   BadRequestException,
   ForbiddenException,
-} from '@nestjs/common';
-import { SignInDto, SignUpDto, AccessDto, RefreshDto } from './dto';
-import { InjectModel } from '@nestjs/sequelize';
-import { UserEntity } from '../users/entities/user.entity';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
+} from "@nestjs/common";
+import { SignInDto, SignUpDto, AccessDto, RefreshDto } from "./dto";
+import { InjectModel } from "@nestjs/sequelize";
+import { UserModel } from "../users/model/user.model";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(UserEntity)
-    private userEntity: typeof UserEntity,
+    @InjectModel(UserModel)
+    private userEntity: typeof UserModel,
     private jwtService: JwtService,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
 
   async signUp(dto: SignUpDto) {
@@ -25,7 +25,7 @@ export class AuthService {
     });
     if (candidate) {
       throw new BadRequestException(
-        `User with login ${dto.login} already exists`,
+        `User with login ${dto.login} already exists`
       );
     }
     const hashPassword = await bcrypt.hash(dto.password, 5);
@@ -53,11 +53,11 @@ export class AuthService {
       where: { login: dto.login },
     });
     if (!user) {
-      throw new ForbiddenException('Incorrect login or password');
+      throw new ForbiddenException("Incorrect login or password");
     }
     const isCorrectPassword = bcrypt.compare(dto.password, user.passwordHash);
     if (!isCorrectPassword) {
-      throw new ForbiddenException('Incorrect login or password');
+      throw new ForbiddenException("Incorrect login or password");
     }
     const access_token = await this.signAccessToken({
       id: user.id,
@@ -79,7 +79,7 @@ export class AuthService {
       where: { refreshToken: dto.refresh_token },
     });
     if (!user) {
-      throw new ForbiddenException('Incorrect refresh token');
+      throw new ForbiddenException("Incorrect refresh token");
     }
     const access_token = await this.signAccessToken({
       id: user.id,
@@ -104,18 +104,18 @@ export class AuthService {
 
   async signAccessToken(dto: { id: number; login: string }) {
     const payload = { login: dto.login, sub: dto.id };
-    const secret = this.configService.get('JWT_ACCESS_TOKEN_SECRET');
+    const secret = this.configService.get("JWT_ACCESS_TOKEN_SECRET");
     return this.jwtService.sign(payload, {
-      expiresIn: '365d',
+      expiresIn: "365d",
       secret,
     });
   }
 
   async signRefreshToken(dto: { id: number; login: string }) {
     const payload = { login: dto.login, sub: dto.id };
-    const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET');
+    const secret = this.configService.get("JWT_REFRESH_TOKEN_SECRET");
     return this.jwtService.sign(payload, {
-      expiresIn: '365d',
+      expiresIn: "365d",
       secret,
     });
   }
