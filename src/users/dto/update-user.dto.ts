@@ -12,8 +12,8 @@ import { LANGUAGES } from "../enum";
 export class UpdateUserDto {
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
-  login: string;
+  @IsEmail()
+  email: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -34,11 +34,6 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(LANGUAGES)
   language: LANGUAGES;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsEmail()
-  email: string;
 
   @ApiPropertyOptional()
   @IsOptional()

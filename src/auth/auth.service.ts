@@ -21,11 +21,11 @@ export class AuthService {
 
   async signUp(dto: SignUpDto) {
     const candidate = await this.userEntity.findOne({
-      where: { login: dto.login },
+      where: { email: dto.email },
     });
     if (candidate) {
       throw new BadRequestException(
-        `User with login ${dto.login} already exists`
+        `User with email ${dto.email} already exists`
       );
     }
     const hashPassword = await bcrypt.hash(dto.password, 5);
@@ -35,12 +35,12 @@ export class AuthService {
     });
     const refresh_token = await this.signRefreshToken({
       id: user.id,
-      login: user.login,
+      email: user.email,
     });
     await user.update({ refreshToken: refresh_token });
     const access_token = await this.signAccessToken({
       id: user.id,
-      login: user.login,
+      email: user.email,
     });
     return {
       access_token,
@@ -50,22 +50,22 @@ export class AuthService {
 
   async signIn(dto: SignInDto) {
     const user = await this.userEntity.findOne({
-      where: { login: dto.login },
+      where: { email: dto.email },
     });
     if (!user) {
-      throw new ForbiddenException("Incorrect login or password");
+      throw new ForbiddenException("Incorrect email or password");
     }
     const isCorrectPassword = bcrypt.compare(dto.password, user.passwordHash);
     if (!isCorrectPassword) {
-      throw new ForbiddenException("Incorrect login or password");
+      throw new ForbiddenException("Incorrect email or password");
     }
     const access_token = await this.signAccessToken({
       id: user.id,
-      login: user.login,
+      email: user.email,
     });
     const refresh_token = await this.signRefreshToken({
       id: user.id,
-      login: user.login,
+      email: user.email,
     });
     await user.update({ refreshToken: refresh_token });
     return {
@@ -83,11 +83,11 @@ export class AuthService {
     }
     const access_token = await this.signAccessToken({
       id: user.id,
-      login: user.login,
+      email: user.email,
     });
     const refresh_token = await this.signRefreshToken({
       id: user.id,
-      login: user.login,
+      email: user.email,
     });
     await user.update({ refresh_token });
     return {
@@ -102,8 +102,8 @@ export class AuthService {
     return new AccessDto(null);
   }
 
-  async signAccessToken(dto: { id: number; login: string }) {
-    const payload = { login: dto.login, sub: dto.id };
+  async signAccessToken(dto: { id: number; email: string }) {
+    const payload = { email: dto.email, sub: dto.id };
     const secret = this.configService.get("JWT_ACCESS_TOKEN_SECRET");
     return this.jwtService.sign(payload, {
       expiresIn: "365d",
@@ -111,8 +111,8 @@ export class AuthService {
     });
   }
 
-  async signRefreshToken(dto: { id: number; login: string }) {
-    const payload = { login: dto.login, sub: dto.id };
+  async signRefreshToken(dto: { id: number; email: string }) {
+    const payload = { email: dto.email, sub: dto.id };
     const secret = this.configService.get("JWT_REFRESH_TOKEN_SECRET");
     return this.jwtService.sign(payload, {
       expiresIn: "365d",

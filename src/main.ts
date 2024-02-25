@@ -14,7 +14,7 @@ async function bootstrap() {
   });
   const configService = app.get(ConfigService);
   app.enableCors({
-    origin: "*",
+    origin: configService.get("CLIENT_URLS").split(","),
     credentials: true,
   });
   app.use(helmet());
@@ -51,7 +51,7 @@ async function bootstrap() {
 
   if (configService.get("NODE_ENV") === "development") {
     const config = new DocumentBuilder()
-      .setTitle("ERP RBAC API")
+      .setTitle("Thesis backend API")
       .addBearerAuth({
         description: `
           Admin: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6ImFkbWluIiwic3ViIjoxLCJpYXQiOjE3MDE5NTg2ODYsImV4cCI6MTczMzQ5NDY4Nn0.lM3nU7pjnCo9_FRt1--QxkY-RRUMN1vGQ5DXMAUtLww
@@ -64,6 +64,9 @@ async function bootstrap() {
       })
       .build();
     const document = SwaggerModule.createDocument(app, config);
+    app.use("/api/docs.json", (req, res) => {
+      return res.send(document);
+    });
     SwaggerModule.setup("api", app, document);
   }
 

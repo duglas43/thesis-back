@@ -7,14 +7,13 @@ import {
   IsInt,
   IsEnum,
 } from "class-validator";
-import { Transform } from "class-transformer";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { LANGUAGES } from "../enum";
 
 export class CreateUserDto {
   @ApiProperty()
   @IsString()
-  login: string;
+  email: string;
 
   @ApiProperty()
   @IsString()
@@ -40,11 +39,6 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(LANGUAGES)
   language: LANGUAGES;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsEmail()
-  email: string | null;
 
   @ApiPropertyOptional()
   @IsOptional()

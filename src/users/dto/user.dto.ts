@@ -6,7 +6,7 @@ export class UserDto {
   id: number;
 
   @ApiProperty({ uniqueItems: true })
-  login: string;
+  email: string;
 
   @ApiPropertyOptional({ nullable: true })
   firstName: string | null;
@@ -20,9 +20,6 @@ export class UserDto {
   @ApiProperty({ enum: LANGUAGES })
   language: LANGUAGES;
 
-  @ApiPropertyOptional({ nullable: true })
-  email: string | null;
-
   @ApiPropertyOptional()
   lastVisit: boolean | null;
 
@@ -34,12 +31,11 @@ export class UserDto {
 
   constructor(model: Partial<UserDto>) {
     this.id = model?.id;
-    this.login = model?.login;
+    this.email = model?.email;
     this.firstName = model?.firstName;
     this.lastName = model?.lastName;
     this.patronymic = model?.patronymic;
     this.language = model?.language;
-    this.email = model?.email;
     this.lastVisit = model?.lastVisit;
     this.createdAt = model?.createdAt;
     this.updatedAt = model?.updatedAt;

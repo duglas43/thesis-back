@@ -19,8 +19,9 @@ import { UserPermissionModel } from "./user-permission.model";
 export class UserModel extends Model {
   @AllowNull(false)
   @Unique
+  @IsEmail
   @Column
-  login: string;
+  email: string;
 
   @Column
   passwordHash: string | null;
@@ -39,10 +40,6 @@ export class UserModel extends Model {
 
   @Column
   language: LANGUAGES;
-
-  @IsEmail
-  @Column
-  email: string | null;
 
   @Column
   phone: string | null;

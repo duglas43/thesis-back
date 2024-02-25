@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
       secretOrKey: configService.get("JWT_ACCESS_TOKEN_SECRET"),
     });
   }
-  async validate(payload: { sub: number; login: string }) {
+  async validate(payload: { sub: number; email: string }) {
     const user = await this.userEntity.findOne({
       where: { id: payload.sub },
       include: ["roles"],
