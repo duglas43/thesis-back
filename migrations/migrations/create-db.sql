@@ -1,7 +1,6 @@
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `thesis` DEFAULT CHARACTER SET utf8;
 
-USE `thesis`;
+CREATE SCHEMA IF NOT EXISTS `thesis` DEFAULT CHARACTER SET utf8 ;
+USE `thesis` ;
 
 -- -----------------------------------------------------
 -- Table `thesis`.`User`
@@ -15,12 +14,11 @@ CREATE TABLE IF NOT EXISTS `thesis`.`User` (
   `firstName` VARCHAR(45) NULL,
   `lastName` VARCHAR(45) NULL,
   `patronymic` VARCHAR(45) NULL,
-  `phone` VARCHAR(45) NULL,
-  `lastVisit` DATETIME NULL,
   `createdAt` DATETIME NULL,
   `updatedAt` DATETIME NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`Machine`
@@ -32,8 +30,9 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Machine` (
   `price` FLOAT NOT NULL DEFAULT 0,
   `createdAt` DATETIME NULL,
   `updatedAt` DATETIME NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`Detail`
@@ -44,8 +43,9 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Detail` (
   `partNumber` VARCHAR(45) NULL,
   `createdAt` DATETIME NULL,
   `updatedAt` DATETIME NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`Param`
@@ -57,8 +57,9 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Param` (
   `type` VARCHAR(45) NULL,
   `createdAt` DATETIME NULL,
   `updatedAt` DATETIME NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`DetailParam`
@@ -72,9 +73,18 @@ CREATE TABLE IF NOT EXISTS `thesis`.`DetailParam` (
   PRIMARY KEY (`detailId`, `paramId`),
   INDEX `fk_Detail_has_Param_Param1_idx` (`paramId` ASC),
   INDEX `fk_Detail_has_Param_Detail_idx` (`detailId` ASC),
-  CONSTRAINT `fk_Detail_has_Param_Detail` FOREIGN KEY (`detailId`) REFERENCES `thesis`.`Detail` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Detail_has_Param_Param1` FOREIGN KEY (`paramId`) REFERENCES `thesis`.`Param` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_Detail_has_Param_Detail`
+    FOREIGN KEY (`detailId`)
+    REFERENCES `thesis`.`Detail` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Detail_has_Param_Param1`
+    FOREIGN KEY (`paramId`)
+    REFERENCES `thesis`.`Param` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`MachineDetail`
@@ -88,9 +98,18 @@ CREATE TABLE IF NOT EXISTS `thesis`.`MachineDetail` (
   PRIMARY KEY (`machineId`, `detailId`),
   INDEX `fk_MachineDetail_Detail1_idx` (`detailId` ASC),
   INDEX `fk_MachineDetail_Machine1_idx` (`machineId` ASC),
-  CONSTRAINT `fk_MachineDetail_Machine1` FOREIGN KEY (`machineId`) REFERENCES `thesis`.`Machine` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_MachineDetail_Detail1` FOREIGN KEY (`detailId`) REFERENCES `thesis`.`Detail` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_MachineDetail_Machine1`
+    FOREIGN KEY (`machineId`)
+    REFERENCES `thesis`.`Machine` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_MachineDetail_Detail1`
+    FOREIGN KEY (`detailId`)
+    REFERENCES `thesis`.`Detail` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`Address`
@@ -107,8 +126,13 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Address` (
   `updatedAt` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Address_User1_idx` (`clientId` ASC),
-  CONSTRAINT `fk_Address_User1` FOREIGN KEY (`clientId`) REFERENCES `thesis`.`User` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_Address_User1`
+    FOREIGN KEY (`clientId`)
+    REFERENCES `thesis`.`User` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`Order`
@@ -128,10 +152,23 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Order` (
   INDEX `fk_Order_Address1_idx` (`addressId` ASC),
   INDEX `fk_Order_User1_idx` (`clientId` ASC),
   INDEX `fk_Order_User2_idx` (`responsibleId` ASC),
-  CONSTRAINT `fk_Order_Address1` FOREIGN KEY (`addressId`) REFERENCES `thesis`.`Address` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Order_User1` FOREIGN KEY (`clientId`) REFERENCES `thesis`.`User` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Order_User2` FOREIGN KEY (`responsibleId`) REFERENCES `thesis`.`User` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_Order_Address1`
+    FOREIGN KEY (`addressId`)
+    REFERENCES `thesis`.`Address` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Order_User1`
+    FOREIGN KEY (`clientId`)
+    REFERENCES `thesis`.`User` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Order_User2`
+    FOREIGN KEY (`responsibleId`)
+    REFERENCES `thesis`.`User` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`OrderMachine`
@@ -145,9 +182,18 @@ CREATE TABLE IF NOT EXISTS `thesis`.`OrderMachine` (
   PRIMARY KEY (`orderId`, `machineId`),
   INDEX `fk_OrderMachine_Machine1_idx` (`machineId` ASC),
   INDEX `fk_OrderMachine_Order1_idx` (`orderId` ASC),
-  CONSTRAINT `fk_OrderMachine_Order1` FOREIGN KEY (`orderId`) REFERENCES `thesis`.`Order` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_OrderMachine_Machine1` FOREIGN KEY (`machineId`) REFERENCES `thesis`.`Machine` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_OrderMachine_Order1`
+    FOREIGN KEY (`orderId`)
+    REFERENCES `thesis`.`Order` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_OrderMachine_Machine1`
+    FOREIGN KEY (`machineId`)
+    REFERENCES `thesis`.`Machine` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`Role`
@@ -158,8 +204,9 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Role` (
   `description` VARCHAR(45) NULL,
   `createdAt` DATETIME NULL,
   `updatedAt` DATETIME NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`UserRole`
@@ -172,9 +219,18 @@ CREATE TABLE IF NOT EXISTS `thesis`.`UserRole` (
   PRIMARY KEY (`userId`, `roleId`),
   INDEX `fk_UserPosition_Position1_idx` (`roleId` ASC),
   INDEX `fk_UserPosition_User1_idx` (`userId` ASC),
-  CONSTRAINT `fk_UserPosition_User1` FOREIGN KEY (`userId`) REFERENCES `thesis`.`User` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_UserPosition_Position1` FOREIGN KEY (`roleId`) REFERENCES `thesis`.`Role` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_UserPosition_User1`
+    FOREIGN KEY (`userId`)
+    REFERENCES `thesis`.`User` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_UserPosition_Position1`
+    FOREIGN KEY (`roleId`)
+    REFERENCES `thesis`.`Role` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`Subject`
@@ -184,8 +240,9 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Subject` (
   `name` VARCHAR(45) NOT NULL,
   `createdAt` DATETIME NULL,
   `updatedAt` DATETIME NULL,
-  PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`Permission`
@@ -200,8 +257,13 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Permission` (
   `updatedAt` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Permission_Subject1_idx` (`subjectId` ASC),
-  CONSTRAINT `fk_Permission_Subject1` FOREIGN KEY (`subjectId`) REFERENCES `thesis`.`Subject` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_Permission_Subject1`
+    FOREIGN KEY (`subjectId`)
+    REFERENCES `thesis`.`Subject` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`PermissionField`
@@ -214,8 +276,13 @@ CREATE TABLE IF NOT EXISTS `thesis`.`PermissionField` (
   `updatedAt` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_PermissionField_Permission1_idx` (`permissionId` ASC),
-  CONSTRAINT `fk_PermissionField_Permission1` FOREIGN KEY (`permissionId`) REFERENCES `thesis`.`Permission` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_PermissionField_Permission1`
+    FOREIGN KEY (`permissionId`)
+    REFERENCES `thesis`.`Permission` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`PermissionCondition`
@@ -229,8 +296,13 @@ CREATE TABLE IF NOT EXISTS `thesis`.`PermissionCondition` (
   `updatedAt` DATETIME NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_PermissionCondition_Permission1_idx` (`permissionId` ASC),
-  CONSTRAINT `fk_PermissionCondition_Permission1` FOREIGN KEY (`permissionId`) REFERENCES `thesis`.`Permission` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_PermissionCondition_Permission1`
+    FOREIGN KEY (`permissionId`)
+    REFERENCES `thesis`.`Permission` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`RolePermission`
@@ -243,9 +315,18 @@ CREATE TABLE IF NOT EXISTS `thesis`.`RolePermission` (
   PRIMARY KEY (`roleId`, `permissionId`),
   INDEX `fk_RolePermission_Permission1_idx` (`permissionId` ASC),
   INDEX `fk_RolePermission_Role1_idx` (`roleId` ASC),
-  CONSTRAINT `fk_RolePermission_Role1` FOREIGN KEY (`roleId`) REFERENCES `thesis`.`Role` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_RolePermission_Permission1` FOREIGN KEY (`permissionId`) REFERENCES `thesis`.`Permission` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_RolePermission_Role1`
+    FOREIGN KEY (`roleId`)
+    REFERENCES `thesis`.`Role` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RolePermission_Permission1`
+    FOREIGN KEY (`permissionId`)
+    REFERENCES `thesis`.`Permission` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`UserPermission`
@@ -258,6 +339,16 @@ CREATE TABLE IF NOT EXISTS `thesis`.`UserPermission` (
   PRIMARY KEY (`userId`, `permissionId`),
   INDEX `fk_UserPermission_Permission1_idx` (`permissionId` ASC),
   INDEX `fk_UserPermission_User1_idx` (`userId` ASC),
-  CONSTRAINT `fk_UserPermission_User1` FOREIGN KEY (`userId`) REFERENCES `thesis`.`User` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_UserPermission_Permission1` FOREIGN KEY (`permissionId`) REFERENCES `thesis`.`Permission` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+  CONSTRAINT `fk_UserPermission_User1`
+    FOREIGN KEY (`userId`)
+    REFERENCES `thesis`.`User` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_UserPermission_Permission1`
+    FOREIGN KEY (`permissionId`)
+    REFERENCES `thesis`.`Permission` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+

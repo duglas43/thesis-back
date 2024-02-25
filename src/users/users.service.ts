@@ -1,13 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { CreateUserDto, UpdateUserDto, UserDto, FindUserDto } from "./dto";
+import { CreateUserDto, UpdateUserDto, UserDto, FindUsersDto } from "./dto";
 import { InjectModel } from "@nestjs/sequelize";
 import { UserModel } from "./model/user.model";
 import { Op } from "sequelize";
 import * as bcrypt from "bcrypt";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { ACTIONS } from "src/casl/enum";
 import { RoleDto } from "src/roles/dto";
 import { PermissionDto } from "src/permissions/dto";
+import { ListResponseDto } from "src/common/dto";
+import { ORDER } from "src/common/enum";
 
 @Injectable()
 export class UsersService {
@@ -29,12 +29,13 @@ export class UsersService {
     return new UserDto(user);
   }
 
-  async findAll(dto: FindUserDto) {
-    const users = await this.userModel.findAll({
+  async findAll(dto: FindUsersDto) {
+    const { rows, count } = await this.userModel.findAndCountAll({
       where: {
         [Op.and]: [
           dto.query && {
             [Op.or]: [
+              { email: { [Op.like]: `%${dto.query}%` } },
               { firstName: { [Op.like]: `%${dto.query}%` } },
               { lastName: { [Op.like]: `%${dto.query}%` } },
               { patronymic: { [Op.like]: `%${dto.query}%` } },
@@ -42,8 +43,23 @@ export class UsersService {
           },
         ].filter(Boolean),
       },
+      ...(dto.sort && { order: [[dto.sort, dto.order]] }),
+      ...(dto.limit && { limit: dto.limit }),
+      ...(dto.page && { offset: dto.limit * dto.page }),
     });
-    return users.map((user) => new UserDto(user));
+    const response = new ListResponseDto<UserDto>(
+      rows.map((user) => new UserDto(user)),
+      {
+        totalCount: count,
+        pageCount: Math.ceil(count / dto.limit) || 1,
+        resultCount: rows.length,
+        page: dto.page || 1,
+        limit: dto.limit || count,
+        order: dto.order || ORDER.ASC,
+        sort: dto.sort || "id",
+      }
+    );
+    return response;
   }
 
   async findOne(id: number) {

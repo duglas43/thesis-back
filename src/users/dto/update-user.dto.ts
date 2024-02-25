@@ -30,15 +30,10 @@ export class UpdateUserDto {
   @IsString()
   patronymic: string;
 
-  @ApiPropertyOptional({ enum: LANGUAGES })
+  @ApiPropertyOptional({ enum: LANGUAGES, enumName: "LANGUAGES" })
   @IsOptional()
   @IsEnum(LANGUAGES)
   language: LANGUAGES;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsPhoneNumber()
-  phone: string;
 
   @ApiPropertyOptional({})
   @IsOptional()

@@ -35,15 +35,10 @@ export class CreateUserDto {
   @IsString()
   patronymic: string | null;
 
-  @ApiPropertyOptional({ enum: LANGUAGES })
+  @ApiPropertyOptional({ enum: LANGUAGES, enumName: "LANGUAGES" })
   @IsOptional()
   @IsEnum(LANGUAGES)
   language: LANGUAGES;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsPhoneNumber()
-  phone: string | null;
 
   @ApiPropertyOptional({})
   @IsOptional()

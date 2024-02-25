@@ -13,7 +13,7 @@ export class PermissionDto {
   @ApiProperty()
   modality: boolean;
 
-  @ApiProperty({ enum: ACTIONS })
+  @ApiProperty({ enum: ACTIONS, enumName: "ACTIONS" })
   action: ACTIONS;
 
   @ApiProperty({ type: [PermissionFieldDto] })

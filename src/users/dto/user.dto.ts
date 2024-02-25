@@ -17,11 +17,8 @@ export class UserDto {
   @ApiPropertyOptional({ nullable: true })
   patronymic: string | null;
 
-  @ApiProperty({ enum: LANGUAGES })
+  @ApiProperty({ enum: LANGUAGES, enumName: "LANGUAGES" })
   language: LANGUAGES;
-
-  @ApiPropertyOptional()
-  lastVisit: boolean | null;
 
   @ApiProperty()
   createdAt: Date;
@@ -36,7 +33,6 @@ export class UserDto {
     this.lastName = model?.lastName;
     this.patronymic = model?.patronymic;
     this.language = model?.language;
-    this.lastVisit = model?.lastVisit;
     this.createdAt = model?.createdAt;
     this.updatedAt = model?.updatedAt;
   }

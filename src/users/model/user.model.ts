@@ -38,15 +38,6 @@ export class UserModel extends Model {
   @Column
   patronymic: string | null;
 
-  @Column
-  language: LANGUAGES;
-
-  @Column
-  phone: string | null;
-
-  @Column
-  lastVisit: boolean | null;
-
   @BelongsToMany(() => RoleModel, () => UserRoleModel, "userId", "roleId")
   roles: RoleModel[];
 

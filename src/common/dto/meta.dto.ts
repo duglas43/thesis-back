@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { ORDER } from '../enum';
+import { ApiProperty } from "@nestjs/swagger";
+import { ORDER } from "../enum";
 export class MetaDto {
   @ApiProperty()
   totalCount: number; // total number of items
@@ -11,7 +11,7 @@ export class MetaDto {
   page: number; // current page
   @ApiProperty()
   limit: number;
-  @ApiProperty()
+  @ApiProperty({ enum: ORDER, enumName: "ORDER" })
   order: ORDER;
   @ApiProperty()
   sort: string;

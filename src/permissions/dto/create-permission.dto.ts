@@ -52,7 +52,7 @@ export class CreatePermissionDto {
   @IsBoolean()
   reason?: string;
 
-  @ApiProperty({ enum: ACTIONS })
+  @ApiProperty({ enum: ACTIONS, enumName: "ACTIONS" })
   @IsEnum(ACTIONS)
   action: ACTIONS;
 }

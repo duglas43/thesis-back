@@ -11,15 +11,15 @@ import {
   ParseArrayPipe,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { CreateUserDto, UpdateUserDto, FindUserDto } from "./dto/";
+import { CreateUserDto, UpdateUserDto, FindUsersDto } from "./dto/";
 import { UserDto } from "./dto";
 import {
   ApiTags,
   ApiOkResponse,
   ApiCreatedResponse,
-  ApiBody,
   ApiBearerAuth,
 } from "@nestjs/swagger";
+import { ApiListResponse } from "src/common/swagger/decorators";
 import { GetUser } from "src/auth/decorator";
 import { CheckPolicies } from "src/casl/decorator";
 import { ACTIONS } from "src/casl/enum";
@@ -54,9 +54,9 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOkResponse({ type: UserDto, isArray: true })
-  findAll(@Query() findUserDto: FindUserDto) {
-    return this.usersService.findAll(findUserDto);
+  @ApiListResponse(UserDto)
+  findAll(@Query() findUsersDto: FindUsersDto) {
+    return this.usersService.findAll(findUsersDto);
   }
 
   @Get("me")
