@@ -9,11 +9,12 @@ import { UserModel } from "src/users/model";
 import { AddressModel } from "src/addresses/model";
 import { MachineModel } from "src/machines/model";
 import { OrderMachineModel } from "./order-machine.model";
+import { AppModel } from "src/common/sequelize/models";
 
 @Table({
   tableName: "Order",
 })
-export class OrderModel extends Model {
+export class OrderModel extends AppModel<OrderModel> {
   @Column
   name: string;
 

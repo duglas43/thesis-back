@@ -65,10 +65,7 @@ export class UsersService {
   }
 
   async findOne(id: number) {
-    const user = await this.userModel.findByPk(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
+    const user = await this.userModel.findByPkOrThrow(id);
     return new UserDto(user);
   }
 

@@ -1,6 +1,7 @@
-import { Model, Table } from 'sequelize-typescript';
+import { Model, Table } from "sequelize-typescript";
+import { AppModel } from "src/common/sequelize/models";
 
 @Table({
-  tableName: 'RolePermission',
+  tableName: "RolePermission",
 })
-export class RolePermissionModel extends Model {}
+export class RolePermissionModel extends AppModel<RolePermissionModel> {}

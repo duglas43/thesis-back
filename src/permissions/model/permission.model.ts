@@ -3,11 +3,12 @@ import { PermissionConditionModel } from "src/permission-conditions/model";
 import { PermissionFieldModel } from "src/permission-fields/model";
 import { SubjectModel } from "src/subjects/model";
 import { ACTIONS } from "src/casl/enum";
+import { AppModel } from "src/common/sequelize/models";
 
 @Table({
   tableName: "Permission",
 })
-export class PermissionModel extends Model {
+export class PermissionModel extends AppModel<PermissionModel> {
   @Column
   subjectId: number;
   @BelongsTo(() => SubjectModel, "subjectId")

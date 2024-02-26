@@ -2,11 +2,12 @@ import { Column, Model, Table, BelongsToMany } from "sequelize-typescript";
 import { Types } from "../enum";
 import { DetailModel } from "src/details/model";
 import { DetailParamModel } from "src/details/model";
+import { AppModel } from "src/common/sequelize/models";
 
 @Table({
   tableName: "Param",
 })
-export class ParamModel extends Model {
+export class ParamModel extends AppModel<ParamModel> {
   @Column
   name: string;
 
@@ -14,7 +15,7 @@ export class ParamModel extends Model {
   unit: string;
 
   @Column
-  type: Types;
+  type: string;
 
   @BelongsToMany(
     () => DetailModel,

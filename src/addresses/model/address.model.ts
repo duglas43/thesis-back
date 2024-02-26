@@ -1,9 +1,11 @@
-import { Column, Model, Table, BelongsTo } from "sequelize-typescript";
+import { Column, Table, BelongsTo } from "sequelize-typescript";
 import { UserModel } from "src/users/model";
+import { AppModel } from "src/common/sequelize/models";
+
 @Table({
   tableName: "Address",
 })
-export class AddressModel extends Model {
+export class AddressModel extends AppModel<AddressModel> {
   @Column
   index: number;
 

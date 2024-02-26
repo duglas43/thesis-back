@@ -1,5 +1,6 @@
-import { IsString, IsInt, IsBoolean } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsInt, IsBoolean, IsEnum } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { ACTIONS } from "src/casl/enum";
 
 export class UpdatePermissionDto {
   @ApiProperty()
@@ -10,8 +11,8 @@ export class UpdatePermissionDto {
   @IsBoolean()
   modality: boolean;
 
-  // TODO: enum
-  @ApiProperty()
+  @ApiProperty({ enum: ACTIONS, enumName: "ACTIONS" })
+  @IsEnum(ACTIONS)
   @IsString()
-  action: string;
+  action: ACTIONS;
 }

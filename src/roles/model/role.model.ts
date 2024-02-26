@@ -9,16 +9,14 @@ import { UserModel, UserRoleModel } from "src/users/model";
 import { ROLES } from "../enum";
 import { PermissionModel } from "src/permissions/model";
 import { RolePermissionModel } from "./role-permission.model";
+import { AppModel } from "src/common/sequelize/models";
 
 @Table({
   tableName: "Role",
 })
-export class RoleModel extends Model {
-  @Column({
-    type: DataType.ENUM,
-    values: Object.values(ROLES),
-  })
-  name: ROLES;
+export class RoleModel extends AppModel<RoleModel> {
+  @Column
+  name: string;
 
   @Column
   description: string;

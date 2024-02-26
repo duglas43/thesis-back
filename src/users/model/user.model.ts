@@ -8,15 +8,15 @@ import {
   BelongsToMany,
 } from "sequelize-typescript";
 import { RoleModel } from "../../roles/model/role.model";
-import { LANGUAGES } from "../enum";
 import { UserRoleModel } from "./user-role.model";
 import { PermissionModel } from "src/permissions/model";
 import { UserPermissionModel } from "./user-permission.model";
+import { AppModel } from "src/common/sequelize/models";
 
 @Table({
   tableName: "User",
 })
-export class UserModel extends Model {
+export class UserModel extends AppModel<UserModel> {
   @AllowNull(false)
   @Unique
   @IsEmail

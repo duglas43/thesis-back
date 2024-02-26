@@ -25,9 +25,7 @@ export class AddressesService {
     const address = await this.addressEntity.findAll({
       where: {
         [Op.or]: [
-          { index: { [Op.like]: `%${dto.query}%` } },
           { city: { [Op.like]: `%${dto.query}%` } },
-          { disrtict: { [Op.like]: `%${dto.query}%` } },
           { building: { [Op.like]: `%${dto.query}%` } },
         ],
       },

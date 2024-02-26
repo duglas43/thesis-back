@@ -3,11 +3,12 @@ import { MachineModel } from "src/machines/model";
 import { MachineDetailModel } from "src/machines/model";
 import { DetailParamModel } from "./detail-param.model";
 import { ParamModel } from "src/params/model/param.model";
+import { AppModel } from "src/common/sequelize/models";
 
 @Table({
   tableName: "Detail",
 })
-export class DetailModel extends Model {
+export class DetailModel extends AppModel<DetailModel> {
   @Column
   name: string;
 

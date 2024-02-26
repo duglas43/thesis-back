@@ -36,7 +36,7 @@ export class ParamsService {
 
   async update(id: number, dto: UpdateParamDto) {
     const param = await this.paramEntity.findByPk(id);
-    await this.paramEntity.update(dto, { where: { id } });
+    await param.update(dto);
     return new ParamDto(param);
   }
 
