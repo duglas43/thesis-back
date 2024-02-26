@@ -21,11 +21,6 @@ import {
 } from "@nestjs/swagger";
 import { ApiListResponse } from "src/common/swagger/decorators";
 import { GetUser } from "src/auth/decorator";
-import { CheckPolicies } from "src/casl/decorator";
-import { ACTIONS } from "src/casl/enum";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { GetAbility } from "src/casl/decorator";
-import { UserModel } from "./model/user.model";
 import {
   AppApiUnauthorizedResponse,
   AppApiNotFoundResponse,
@@ -44,9 +39,6 @@ import { PermissionDto } from "src/permissions/dto";
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(ACTIONS.CREATE, UserModel)
-  )
   @Post()
   @ApiCreatedResponse({ type: UserDto })
   create(@Body() createUserDto: CreateUserDto) {
@@ -82,10 +74,7 @@ export class UsersController {
 
   @Delete(":id")
   @ApiOkResponse({ type: UserDto })
-  remove(
-    @Param("id", ParseIntPipe) id: number,
-    @GetAbility() ability: AppAbility
-  ) {
+  remove(@Param("id", ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
 

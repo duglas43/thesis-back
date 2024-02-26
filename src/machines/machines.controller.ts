@@ -27,11 +27,6 @@ import {
   AppApiNotFoundResponse,
   AppApiForbiddenResponse,
 } from "src/common/swagger/decorators";
-import { CheckPolicies } from "src/casl/decorator";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { GetAbility } from "src/casl/decorator";
-import { ACTIONS } from "src/casl/enum";
-import { MachineModel } from "./model/machine.model";
 
 @ApiBearerAuth()
 @AppApiUnauthorizedResponse()
@@ -43,7 +38,6 @@ export class MachinesController {
   constructor(private readonly machinesService: MachinesService) {}
 
   @Post()
-  @CheckPolicies((ability) => ability.can(ACTIONS.CREATE, MachineModel))
   @ApiCreatedResponse({ type: MachineDto })
   create(@Body() createMachineDto: CreateMachineDto) {
     return this.machinesService.create(createMachineDto);
@@ -51,38 +45,28 @@ export class MachinesController {
 
   @Get()
   @ApiOkResponse({ type: MachineDto, isArray: true })
-  findAll(
-    @Query() findMachineDto: FindMachineDto,
-    @GetAbility() ability: AppAbility
-  ) {
-    return this.machinesService.findAll(findMachineDto, ability);
+  findAll(@Query() findMachineDto: FindMachineDto) {
+    return this.machinesService.findAll(findMachineDto);
   }
 
   @Get(":id")
   @ApiOkResponse({ type: MachineDto })
-  findOne(
-    @Param("id", ParseIntPipe) id: number,
-    @GetAbility() ability: AppAbility
-  ) {
-    return this.machinesService.findOne(id, ability);
+  findOne(@Param("id", ParseIntPipe) id: number) {
+    return this.machinesService.findOne(id);
   }
 
   @Patch(":id")
   @ApiOkResponse({ type: MachineDto })
   update(
     @Param("id", ParseIntPipe) id: number,
-    @Body() updateMachineDto: UpdateMachineDto,
-    @GetAbility() ability: AppAbility
+    @Body() updateMachineDto: UpdateMachineDto
   ) {
-    return this.machinesService.update(id, updateMachineDto, ability);
+    return this.machinesService.update(id, updateMachineDto);
   }
 
   @Delete(":id")
   @ApiOkResponse({ type: MachineDto })
-  remove(
-    @Param("id", ParseIntPipe) id: number,
-    @GetAbility() ability: AppAbility
-  ) {
-    return this.machinesService.remove(id, ability);
+  remove(@Param("id", ParseIntPipe) id: number) {
+    return this.machinesService.remove(id);
   }
 }

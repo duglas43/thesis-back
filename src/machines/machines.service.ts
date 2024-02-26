@@ -8,8 +8,6 @@ import {
 import { InjectModel } from "@nestjs/sequelize";
 import { MachineModel } from "./model/machine.model";
 import { Op } from "sequelize";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { ACTIONS } from "src/casl/enum";
 
 @Injectable()
 export class MachinesService {
@@ -23,7 +21,7 @@ export class MachinesService {
     return new MachineDto(machine);
   }
 
-  async findAll(dto: FindMachineDto, ability: AppAbility) {
+  async findAll(dto: FindMachineDto) {
     const machines = await this.machineEntity.findAll({
       where: {
         [Op.or]: [
@@ -32,48 +30,29 @@ export class MachinesService {
         ],
       },
     });
-    return machines.reduce((acc, machine) => {
-      if (ability.can(ACTIONS.READ, machine)) {
-        acc.push(new MachineDto(machine));
-      }
-      return acc;
-    }, []);
+    return machines.map((machine) => new MachineDto(machine));
   }
 
-  async findOne(id: number, ability: AppAbility) {
+  async findOne(id: number) {
     const machine = await this.machineEntity.findByPk(id);
     if (!machine) {
-      throw new NotFoundException("Machine not found");
-    }
-    if (!ability.can(ACTIONS.READ, machine)) {
       throw new NotFoundException("Machine not found");
     }
     return new MachineDto(machine);
   }
 
-  async update(id: number, dto: UpdateMachineDto, ability: AppAbility) {
+  async update(id: number, dto: UpdateMachineDto) {
     const machine = await this.machineEntity.findByPk(id);
     if (!machine) {
       throw new NotFoundException("Machine not found");
     }
-    if (!ability.can(ACTIONS.UPDATE, machine)) {
-      throw new NotFoundException("Machine not found");
-    }
-    Object.keys(dto).forEach((key) => {
-      if (!ability.can(ACTIONS.UPDATE, machine, key)) {
-        delete dto[key];
-      }
-    });
     await this.machineEntity.update(dto, { where: { id } });
     return new MachineDto(machine);
   }
 
-  async remove(id: number, ability: AppAbility) {
+  async remove(id: number) {
     const machine = await this.machineEntity.findByPk(id);
     if (!machine) {
-      throw new NotFoundException("Machine not found");
-    }
-    if (!ability.can(ACTIONS.DELETE, machine)) {
       throw new NotFoundException("Machine not found");
     }
     await machine.destroy();

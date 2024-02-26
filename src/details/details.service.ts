@@ -9,8 +9,6 @@ import { DetailModel } from "./model/detail.model";
 import { InjectModel } from "@nestjs/sequelize";
 import { Op } from "sequelize";
 import { ParamModel } from "src/params/model/param.model";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { ACTIONS } from "src/casl/enum";
 import { DetailParamModel } from "./model";
 
 @Injectable()
@@ -27,7 +25,7 @@ export class DetailsService {
     return new DetailDto(detail);
   }
 
-  async findAll(dto: FindDetailDto, ability: AppAbility) {
+  async findAll(dto: FindDetailDto) {
     const details = await this.detailEntity.findAll({
       where: {
         [Op.or]: [
@@ -36,48 +34,29 @@ export class DetailsService {
         ],
       },
     });
-    return details.reduce((acc, detail) => {
-      if (ability.can(ACTIONS.READ, detail)) {
-        acc.push(new DetailDto(detail));
-      }
-      return acc;
-    }, []);
+    return details.map((detail) => new DetailDto(detail));
   }
 
-  async findOne(id: number, ability: AppAbility) {
+  async findOne(id: number) {
     const detail = await this.detailEntity.findByPk(id);
     if (!detail) {
-      throw new NotFoundException("Detail not found");
-    }
-    if (!ability.can(ACTIONS.READ, detail)) {
       throw new NotFoundException("Detail not found");
     }
     return new DetailDto(detail);
   }
 
-  async update(id: number, dto: UpdateDetailDto, ability: AppAbility) {
+  async update(id: number, dto: UpdateDetailDto) {
     const detail = await this.detailEntity.findByPk(id);
     if (!detail) {
       throw new NotFoundException("Detail not found");
     }
-    if (!ability.can(ACTIONS.UPDATE, detail)) {
-      throw new NotFoundException("Detail not found");
-    }
-    Object.keys(dto).forEach((key) => {
-      if (!ability.can(ACTIONS.UPDATE, detail, key)) {
-        delete dto[key];
-      }
-    });
     await this.detailEntity.update(dto, { where: { id } });
     return new DetailDto(detail);
   }
 
-  async remove(id: number, ability: AppAbility) {
+  async remove(id: number) {
     const detail = await this.detailEntity.findByPk(id);
     if (!detail) {
-      throw new NotFoundException("Detail not found");
-    }
-    if (!ability.can(ACTIONS.DELETE, detail)) {
       throw new NotFoundException("Detail not found");
     }
     await detail.destroy();
@@ -86,28 +65,21 @@ export class DetailsService {
 
   async addParam(
     id: number,
-    { paramId, value }: { paramId: number; value: string },
-    ability: AppAbility
+    { paramId, value }: { paramId: number; value: string }
   ) {
     const detail = await this.detailEntity.findByPk(id);
     const param = await DetailParamModel.findByPk(paramId);
     if (!detail || !param) {
       throw new NotFoundException("Detail or param not found");
     }
-    if (!ability.can(ACTIONS.CREATE, DetailParamModel)) {
-      throw new NotFoundException("Detail or param not found");
-    }
     await detail.$add("params", paramId, { through: { value } });
     return new DetailDto(detail);
   }
 
-  async removeParam(id: number, paramId: number, ability: AppAbility) {
+  async removeParam(id: number, paramId: number) {
     const detail = await this.detailEntity.findByPk(id);
     const param = await DetailParamModel.findByPk(paramId);
     if (!detail || !param) {
-      throw new NotFoundException("Detail or param not found");
-    }
-    if (!ability.can(ACTIONS.DELETE, DetailParamModel)) {
       throw new NotFoundException("Detail or param not found");
     }
     await detail.$remove("params", paramId);

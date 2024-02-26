@@ -7,8 +7,6 @@ import { CreateRoleDto, UpdateRoleDto, RoleDto, FindRoleDto } from "./dto";
 import { RoleModel } from "./model/role.model";
 import { InjectModel } from "@nestjs/sequelize";
 import { Op } from "sequelize";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { ACTIONS } from "src/casl/enum";
 import { PermissionDto } from "src/permissions/dto";
 
 @Injectable()
@@ -23,7 +21,7 @@ export class RolesService {
     return new RoleDto(role);
   }
 
-  async findAll(dto: FindRoleDto, ability: AppAbility) {
+  async findAll(dto: FindRoleDto) {
     const roles = await this.roleModel.findAll({
       where: {
         [Op.or]: [
@@ -32,47 +30,31 @@ export class RolesService {
         ],
       },
     });
-    return roles.reduce((acc, role) => {
-      if (ability.can(ACTIONS.READ, role)) {
-        acc.push(new RoleDto(role));
-      }
-      return acc;
-    }, []);
+    return roles.map((role) => new RoleDto(role));
   }
 
-  async findOne(id: number, ability: AppAbility) {
+  async findOne(id: number) {
     const role = await this.roleModel.findByPk(id);
-    if (!ability.can(ACTIONS.READ, role)) {
-      throw new ForbiddenException();
-    }
+
     return new RoleDto(role);
   }
 
-  async update(id: number, dto: UpdateRoleDto, ability: AppAbility) {
+  async update(id: number, dto: UpdateRoleDto) {
     const role = await this.roleModel.findByPk(id);
     if (!role) {
       throw new NotFoundException();
     }
-    if (!ability.can(ACTIONS.UPDATE, role)) {
-      throw new ForbiddenException();
-    }
-    Object.keys(dto).forEach((key) => {
-      if (!ability.can(ACTIONS.UPDATE, role, key)) {
-        delete dto[key];
-      }
-    });
+
     await this.roleModel.update(dto, { where: { id } });
     return new RoleDto(role);
   }
 
-  async remove(id: number, ability: AppAbility) {
+  async remove(id: number) {
     const role = await this.roleModel.findByPk(id);
     if (!role) {
       throw new NotFoundException();
     }
-    if (!ability.can(ACTIONS.DELETE, role)) {
-      throw new ForbiddenException();
-    }
+
     await role.destroy();
     return new RoleDto(role);
   }

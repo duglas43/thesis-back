@@ -16,10 +16,6 @@ import {
   ApiBearerAuth,
 } from "@nestjs/swagger";
 import { CreatePermissionDto, UpdatePermissionDto, PermissionDto } from "./dto";
-import { CheckPolicies } from "src/casl/decorator";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { ACTIONS } from "src/casl/enum";
-import { PermissionModel } from "./model";
 
 @ApiBearerAuth()
 @ApiTags("permission")
@@ -34,9 +30,6 @@ export class PermissionsController {
   }
 
   @Get()
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(ACTIONS.READ, PermissionModel)
-  )
   @ApiOkResponse({ type: [PermissionDto] })
   findAll() {
     return this.permissionsService.findAll();

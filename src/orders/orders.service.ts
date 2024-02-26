@@ -7,9 +7,6 @@ import { CreateOrderDto, UpdateOrderDto, OrderDto, FindOrderDto } from "./dto";
 import { OrderModel } from "./model/order.model";
 import { InjectModel } from "@nestjs/sequelize";
 import { Op } from "sequelize";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { ACTIONS } from "src/casl/enum";
-import { OrderMachineModel } from "./model/order-machine.model";
 
 @Injectable()
 export class OrdersService {
@@ -23,7 +20,7 @@ export class OrdersService {
     return new OrderDto(order);
   }
 
-  async findAll(dto: FindOrderDto, ability: AppAbility) {
+  async findAll(dto: FindOrderDto) {
     const orders = await this.orderEntity.findAll({
       where: {
         [Op.or]: [
@@ -32,15 +29,10 @@ export class OrdersService {
         ],
       },
     });
-    return orders.reduce((acc, order) => {
-      if (ability.can(ACTIONS.READ, order)) {
-        acc.push(new OrderDto(order));
-      }
-      return acc;
-    }, []);
+    return orders.map((order) => new OrderDto(order));
   }
 
-  async findOne(id: number, ability: AppAbility) {
+  async findOne(id: number) {
     const order = await this.orderEntity.findByPk(id);
     if (!order) {
       throw new NotFoundException();
@@ -48,57 +40,42 @@ export class OrdersService {
     return new OrderDto(order);
   }
 
-  async update(id: number, dto: UpdateOrderDto, ability) {
+  async update(id: number, dto: UpdateOrderDto) {
     const order = await this.orderEntity.findByPk(id);
     if (!order) {
       throw new NotFoundException();
     }
-    if (!ability.can(ACTIONS.UPDATE, order)) {
-      throw new ForbiddenException();
-    }
-    Object.keys(dto).forEach((key) => {
-      if (!ability.can(ACTIONS.UPDATE, order, key)) {
-        delete dto[key];
-      }
-    });
+
     await this.orderEntity.update(dto, { where: { id } });
     return new OrderDto(order);
   }
 
-  async remove(id: number, ability: AppAbility) {
+  async remove(id: number) {
     const order = await this.orderEntity.findByPk(id);
     if (!order) {
       throw new NotFoundException();
     }
-    if (!ability.can(ACTIONS.DELETE, order)) {
-      throw new ForbiddenException();
-    }
+
     await order.destroy();
     return new OrderDto(order);
   }
   async addMachine(
     id: number,
-    { machineId, count }: { machineId: number; count: number },
-    ability: AppAbility
+    { machineId, count }: { machineId: number; count: number }
   ) {
     const order = await this.orderEntity.findByPk(id);
     if (!order) {
       throw new NotFoundException();
     }
-    if (!ability.can(ACTIONS.CREATE, OrderMachineModel)) {
-      throw new ForbiddenException();
-    }
+
     await order.$add("machines", machineId, { through: { count } });
     return new OrderDto(order);
   }
 
-  async removeMachine(id: number, machineId: number, ability: AppAbility) {
+  async removeMachine(id: number, machineId: number) {
     const order = await this.orderEntity.findByPk(id);
     if (!order) {
       throw new NotFoundException();
-    }
-    if (!ability.can(ACTIONS.DELETE, OrderMachineModel)) {
-      throw new ForbiddenException();
     }
     await order.$remove("machines", machineId);
     return new OrderDto(order);

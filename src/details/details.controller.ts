@@ -29,8 +29,6 @@ import {
   AppApiForbiddenResponse,
 } from "src/common/swagger/decorators";
 import { CheckPolicies } from "src/casl/decorator";
-import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { GetAbility } from "src/casl/decorator";
 import { ACTIONS } from "src/casl/enum";
 import { DetailModel } from "./model/detail.model";
 
@@ -44,7 +42,6 @@ export class DetailsController {
   constructor(private readonly detailsService: DetailsService) {}
 
   @Post()
-  @CheckPolicies((ability) => ability.can(ACTIONS.CREATE, DetailModel))
   @ApiCreatedResponse({ type: DetailDto })
   create(@Body() createDetailDto: CreateDetailDto) {
     return this.detailsService.create(createDetailDto);
@@ -52,39 +49,29 @@ export class DetailsController {
 
   @Get()
   @ApiOkResponse({ type: DetailDto, isArray: true })
-  findAll(
-    @Query() findDetailDto: FindDetailDto,
-    @GetAbility() ability: AppAbility
-  ) {
-    return this.detailsService.findAll(findDetailDto, ability);
+  findAll(@Query() findDetailDto: FindDetailDto) {
+    return this.detailsService.findAll(findDetailDto);
   }
 
   @Get(":id")
   @ApiOkResponse({ type: DetailDto })
-  findOne(
-    @Param("id", ParseIntPipe) id: number,
-    @GetAbility() ability: AppAbility
-  ) {
-    return this.detailsService.findOne(id, ability);
+  findOne(@Param("id", ParseIntPipe) id: number) {
+    return this.detailsService.findOne(id);
   }
 
   @Patch(":id")
   @ApiOkResponse({ type: DetailDto })
   update(
     @Param("id", ParseIntPipe) id: number,
-    @Body() updateDetailDto: UpdateDetailDto,
-    @GetAbility() ability: AppAbility
+    @Body() updateDetailDto: UpdateDetailDto
   ) {
-    return this.detailsService.update(id, updateDetailDto, ability);
+    return this.detailsService.update(id, updateDetailDto);
   }
 
   @Delete(":id")
   @ApiOkResponse({ type: DetailDto })
-  remove(
-    @Param("id", ParseIntPipe) id: number,
-    @GetAbility() ability: AppAbility
-  ) {
-    return this.detailsService.remove(id, ability);
+  remove(@Param("id", ParseIntPipe) id: number) {
+    return this.detailsService.remove(id);
   }
 
   @Post(":id/param")
@@ -101,19 +88,17 @@ export class DetailsController {
   addParam(
     @Param("id", ParseIntPipe) id: number,
     @Body("paramId", ParseIntPipe) paramId: number,
-    @Body() value: string,
-    @GetAbility() ability: AppAbility
+    @Body() value: string
   ) {
-    return this.detailsService.addParam(id, { paramId, value }, ability);
+    return this.detailsService.addParam(id, { paramId, value });
   }
 
   @Delete(":id/param/:paramId")
   @ApiOkResponse()
   removeParam(
     @Param("id", ParseIntPipe) id: number,
-    @Param("paramId", ParseIntPipe) paramId: number,
-    @GetAbility() ability: AppAbility
+    @Param("paramId", ParseIntPipe) paramId: number
   ) {
-    return this.detailsService.removeParam(id, paramId, ability);
+    return this.detailsService.removeParam(id, paramId);
   }
 }

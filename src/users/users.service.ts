@@ -43,7 +43,9 @@ export class UsersService {
           },
         ].filter(Boolean),
       },
-      ...(dto.sort && { order: [[dto.sort, dto.order]] }),
+      ...(dto.order && { order: [["id", dto.order]] }),
+      ...(dto.sort && { order: [[dto.sort]] }),
+      ...(dto.sort && dto.order && { order: [[dto.sort, dto.order]] }),
       ...(dto.limit && { limit: dto.limit }),
       ...(dto.page && { offset: dto.limit * dto.page }),
     });
