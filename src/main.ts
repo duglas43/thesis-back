@@ -55,11 +55,11 @@ async function bootstrap() {
       .setTitle("Thesis backend API")
       .addBearerAuth({
         description: `
-          Admin: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6ImFkbWluIiwic3ViIjoxLCJpYXQiOjE3MDE5NTg2ODYsImV4cCI6MTczMzQ5NDY4Nn0.lM3nU7pjnCo9_FRt1--QxkY-RRUMN1vGQ5DXMAUtLww
-          Engineer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkVOR0lORUVSIiwic3ViIjoyLCJpYXQiOjE3MDIzMDg5NDYsImV4cCI6MTczMzg0NDk0Nn0.94YUdCvXJS9CLgy5rdHhDF_pYvJIDf_oHxeffbpg5Lk
-          Client: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkNMSUVOVCIsInN1YiI6MywiaWF0IjoxNzAyMzA4OTgxLCJleHAiOjE3MzM4NDQ5ODF9.LKUFAJd9X-imnDPZQByYS9V8VOU0aZgCoKEOk0_e2BI
-          HR: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6IkhSIiwic3ViIjo0LCJpYXQiOjE3MDIzMDkwMDcsImV4cCI6MTczMzg0NTAwN30.TGvNV0jONasxE4-8zHV_Cw_QQEkN3ykRDCRtMCrBvAk
-          Manager: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6Ik1BTkFHRVIiLCJzdWIiOjUsImlhdCI6MTcwMjMwOTAzNywiZXhwIjoxNzMzODQ1MDM3fQ.R2us6kp97tFKPJnSjzCDmGRLk7ZEXfF5A4P-l63cdVk
+          Admin: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQG1haWwuY29tIiwic3ViIjoxLCJpYXQiOjE3MDg5MjYwMTYsImV4cCI6MTc0MDQ2MjAxNn0.p4RA6eQil7wmC_z9ktTPiddCJot-KP_IDdjzcsZTX9U
+          Engineer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVuZ2luZWVyQG1haWwuY29tIiwic3ViIjoyLCJpYXQiOjE3MDg5MjYwMTYsImV4cCI6MTc0MDQ2MjAxNn0.PEzmsn9CITTUcctyIWV19aI4DFoewD2zbiUi2FFOd0s
+          Client: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNsaWVudEBtYWlsLmNvbSIsInN1YiI6MywiaWF0IjoxNzA4OTI2MDE2LCJleHAiOjE3NDA0NjIwMTZ9.lqqWxtzV0y1H-AlgvzunPmBTHVvaboNK1LaXmrCUdfs
+          HR: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhyQG1haWwuY29tIiwic3ViIjo0LCJpYXQiOjE3MDg5MjYwMTYsImV4cCI6MTc0MDQ2MjAxNn0.3Zq5eyFV_SyFmnD6tkPTLRNbJKCAoy8S8YNLQsI-COc
+          Manager: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hbmFnZXJAbWFpbC5jb20iLCJzdWIiOjUsImlhdCI6MTcwODkyNjAxNiwiZXhwIjoxNzQwNDYyMDE2fQ.z2M4iZtXrEN7KdO6uv69Atp4ufvHotJ9VnTHWKIENpw
           `,
         type: "http",
       })

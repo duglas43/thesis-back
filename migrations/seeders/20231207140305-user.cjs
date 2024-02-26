@@ -6,7 +6,7 @@ module.exports = {
     await queryInterface.bulkInsert("User", [
       {
         id: 1,
-        email: "ADMIN",
+        email: "admin@mail.com",
         passwordHash:
           "$2b$05$m599jM38aIsCCqumbkUl2.6UQcetFz5QJxqj1k5Gi/4qPf9pTWsaq",
         refreshToken: null,
@@ -21,7 +21,7 @@ module.exports = {
       },
       {
         id: 2,
-        email: "ENGINEER",
+        email: "enginner@mail.com",
         passwordHash:
           "$2b$05$m599jM38aIsCCqumbkUl2.6UQcetFz5QJxqj1k5Gi/4qPf9pTWsaq",
         refreshToken: null,
@@ -36,7 +36,7 @@ module.exports = {
       },
       {
         id: 3,
-        email: "CLIENT",
+        email: "client@mail.com",
         passwordHash:
           "$2b$05$m599jM38aIsCCqumbkUl2.6UQcetFz5QJxqj1k5Gi/4qPf9pTWsaq",
         refreshToken: null,
@@ -51,7 +51,7 @@ module.exports = {
       },
       {
         id: 4,
-        email: "HR",
+        email: "hr@mail.com",
         passwordHash:
           "$2b$05$m599jM38aIsCCqumbkUl2.6UQcetFz5QJxqj1k5Gi/4qPf9pTWsaq",
         refreshToken: null,
@@ -66,7 +66,7 @@ module.exports = {
       },
       {
         id: 5,
-        email: "MANAGER",
+        email: "manager@mail.com",
         passwordHash:
           "$2b$05$m599jM38aIsCCqumbkUl2.6UQcetFz5QJxqj1k5Gi/4qPf9pTWsaq",
         refreshToken: null,

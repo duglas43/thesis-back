@@ -3,6 +3,7 @@ import { Reflector } from "@nestjs/core";
 import { UserModel } from "src/users/model/user.model";
 import { RolesAllowed } from "src/auth/decorator";
 import { IS_PUBLIC_KEY } from "../decorator/public.decorator";
+import { ROLES } from "src/roles/enum";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -26,6 +27,6 @@ export class RolesGuard implements CanActivate {
       return false;
     }
     const userRoles = await user.$get("roles");
-    return userRoles.some((role) => roles.includes(role.name));
+    return userRoles.some((role) => roles.includes(role.name as ROLES));
   }
 }
