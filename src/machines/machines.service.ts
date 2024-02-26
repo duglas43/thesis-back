@@ -34,27 +34,18 @@ export class MachinesService {
   }
 
   async findOne(id: number) {
-    const machine = await this.machineEntity.findByPk(id);
-    if (!machine) {
-      throw new NotFoundException("Machine not found");
-    }
+    const machine = await this.machineEntity.findByPkOrThrow(id);
     return new MachineDto(machine);
   }
 
   async update(id: number, dto: UpdateMachineDto) {
-    const machine = await this.machineEntity.findByPk(id);
-    if (!machine) {
-      throw new NotFoundException("Machine not found");
-    }
+    const machine = await this.machineEntity.findByPkOrThrow(id);
     await this.machineEntity.update(dto, { where: { id } });
     return new MachineDto(machine);
   }
 
   async remove(id: number) {
-    const machine = await this.machineEntity.findByPk(id);
-    if (!machine) {
-      throw new NotFoundException("Machine not found");
-    }
+    const machine = await this.machineEntity.findByPkOrThrow(id);
     await machine.destroy();
     return new MachineDto(machine);
   }

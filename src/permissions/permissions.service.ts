@@ -35,7 +35,7 @@ export class PermissionsService {
         });
       });
     }
-    const permission = await this.permissionModel.findByPk(
+    const permission = await this.permissionModel.findByPkOrThrow(
       createdPermission.id,
       {
         include: ["fields", "conditions"],
@@ -52,33 +52,24 @@ export class PermissionsService {
   }
 
   async findOne(id: number) {
-    const permission = await this.permissionModel.findByPk(id, {
+    const permission = await this.permissionModel.findByPkOrThrow(id, {
       include: ["fields", "conditions"],
     });
-    if (!permission) {
-      throw new NotFoundException("Permission  not found");
-    }
     return new PermissionDto(permission);
   }
 
   async update(id: number, updatePermissionDto: UpdatePermissionDto) {
-    const permission = await this.permissionModel.findByPk(id, {
+    const permission = await this.permissionModel.findByPkOrThrow(id, {
       include: ["fields", "conditions"],
     });
-    if (!permission) {
-      throw new NotFoundException("Permission not found");
-    }
     const updatedPermission = await permission.update(updatePermissionDto);
     return new PermissionDto(updatedPermission);
   }
 
   async remove(id: number) {
-    const permission = await this.permissionModel.findByPk(id, {
+    const permission = await this.permissionModel.findByPkOrThrow(id, {
       include: ["fields", "conditions"],
     });
-    if (!permission) {
-      throw new NotFoundException("Permission not found");
-    }
     await permission.destroy();
     return new PermissionDto(permission);
   }

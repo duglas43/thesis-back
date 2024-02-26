@@ -34,18 +34,18 @@ export class AddressesService {
   }
 
   async findOne(id: number) {
-    const address = await this.addressEntity.findByPk(id);
+    const address = await this.addressEntity.findByPkOrThrow(id);
     return new AddressDto(address);
   }
 
   async update(id: number, dto: UpdateAddressDto) {
-    const address = await this.addressEntity.findByPk(id);
+    const address = await this.addressEntity.findByPkOrThrow(id);
     await this.addressEntity.update(dto, { where: { id } });
     return new AddressDto(address);
   }
 
   async remove(id: number) {
-    const address = await this.addressEntity.findByPk(id);
+    const address = await this.addressEntity.findByPkOrThrow(id);
     await address.destroy();
     return new AddressDto(address);
   }

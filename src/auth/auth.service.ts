@@ -63,43 +63,6 @@ export class AuthService {
       id: user.id,
       email: user.email,
     });
-    console.log([
-      {
-        email: "admin@mail.com",
-        access_token: await this.signAccessToken({
-          id: 1,
-          email: "admin@mail.com",
-        }),
-      },
-      {
-        email: "engineer@mail.com",
-        access_token: await this.signAccessToken({
-          id: 2,
-          email: "engineer@mail.com",
-        }),
-      },
-      {
-        email: "client@mail.com",
-        access_token: await this.signAccessToken({
-          id: 3,
-          email: "client@mail.com",
-        }),
-      },
-      {
-        email: "hr@mail.com",
-        access_token: await this.signAccessToken({
-          id: 4,
-          email: "hr@mail.com",
-        }),
-      },
-      {
-        email: "manager@mail.com",
-        access_token: await this.signAccessToken({
-          id: 5,
-          email: "manager@mail.com",
-        }),
-      },
-    ]);
     const refresh_token = await this.signRefreshToken({
       id: user.id,
       email: user.email,
@@ -134,7 +97,7 @@ export class AuthService {
   }
 
   async logout(userId: number) {
-    const user = await this.userEntity.findByPk(userId);
+    const user = await this.userEntity.findByPkOrThrow(userId);
     await user.update({ refreshToken: null });
     return new AccessDto(null);
   }

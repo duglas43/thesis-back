@@ -9,7 +9,6 @@ import { DetailModel } from "./model/detail.model";
 import { InjectModel } from "@nestjs/sequelize";
 import { Op } from "sequelize";
 import { ParamModel } from "src/params/model/param.model";
-import { DetailParamModel } from "./model";
 
 @Injectable()
 export class DetailsService {
@@ -38,27 +37,18 @@ export class DetailsService {
   }
 
   async findOne(id: number) {
-    const detail = await this.detailEntity.findByPk(id);
-    if (!detail) {
-      throw new NotFoundException("Detail not found");
-    }
+    const detail = await this.detailEntity.findByPkOrThrow(id);
     return new DetailDto(detail);
   }
 
   async update(id: number, dto: UpdateDetailDto) {
-    const detail = await this.detailEntity.findByPk(id);
-    if (!detail) {
-      throw new NotFoundException("Detail not found");
-    }
+    const detail = await this.detailEntity.findByPkOrThrow(id);
     await this.detailEntity.update(dto, { where: { id } });
     return new DetailDto(detail);
   }
 
   async remove(id: number) {
-    const detail = await this.detailEntity.findByPk(id);
-    if (!detail) {
-      throw new NotFoundException("Detail not found");
-    }
+    const detail = await this.detailEntity.findByPkOrThrow(id);
     await detail.destroy();
     return new DetailDto(detail);
   }
@@ -67,21 +57,15 @@ export class DetailsService {
     id: number,
     { paramId, value }: { paramId: number; value: string }
   ) {
-    const detail = await this.detailEntity.findByPk(id);
-    const param = await DetailParamModel.findByPk(paramId);
-    if (!detail || !param) {
-      throw new NotFoundException("Detail or param not found");
-    }
+    const detail = await this.detailEntity.findByPkOrThrow(id);
+    const param = await this.paramEntity.findByPkOrThrow(paramId);
     await detail.$add("params", paramId, { through: { value } });
     return new DetailDto(detail);
   }
 
   async removeParam(id: number, paramId: number) {
-    const detail = await this.detailEntity.findByPk(id);
-    const param = await DetailParamModel.findByPk(paramId);
-    if (!detail || !param) {
-      throw new NotFoundException("Detail or param not found");
-    }
+    const detail = await this.detailEntity.findByPkOrThrow(id);
+    await this.paramEntity.findByPkOrThrow(paramId);
     await detail.$remove("params", paramId);
     return new DetailDto(detail);
   }

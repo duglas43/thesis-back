@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateRoleDto, UpdateRoleDto, RoleDto, FindRoleDto } from "./dto";
 import { RoleModel } from "./model/role.model";
 import { InjectModel } from "@nestjs/sequelize";
@@ -34,33 +30,24 @@ export class RolesService {
   }
 
   async findOne(id: number) {
-    const role = await this.roleModel.findByPk(id);
-
+    const role = await this.roleModel.findByPkOrThrow(id);
     return new RoleDto(role);
   }
 
   async update(id: number, dto: UpdateRoleDto) {
-    const role = await this.roleModel.findByPk(id);
-    if (!role) {
-      throw new NotFoundException();
-    }
-
+    const role = await this.roleModel.findByPkOrThrow(id);
     await this.roleModel.update(dto, { where: { id } });
     return new RoleDto(role);
   }
 
   async remove(id: number) {
-    const role = await this.roleModel.findByPk(id);
-    if (!role) {
-      throw new NotFoundException();
-    }
-
+    const role = await this.roleModel.findByPkOrThrow(id);
     await role.destroy();
     return new RoleDto(role);
   }
 
   async findPermissions(id: number) {
-    const role = await this.roleModel.findByPk(id);
+    const role = await this.roleModel.findByPkOrThrow(id);
     if (!role) {
       throw new NotFoundException("Role not found");
     }
@@ -69,7 +56,7 @@ export class RolesService {
   }
 
   async addPermissions(id: number, permissionsId: number[]) {
-    const role = await this.roleModel.findByPk(id);
+    const role = await this.roleModel.findByPkOrThrow(id);
     if (!role) {
       throw new NotFoundException("Role not found");
     }
@@ -79,10 +66,7 @@ export class RolesService {
   }
 
   async removePermissions(id: number, permissionsId: number[]) {
-    const role = await this.roleModel.findByPk(id);
-    if (!role) {
-      throw new NotFoundException("Role not found");
-    }
+    const role = await this.roleModel.findByPkOrThrow(id);
     await role.$remove("permissions", permissionsId);
     const permissions = await role.$get("permissions");
     return permissions.map((permission) => new PermissionDto(permission));

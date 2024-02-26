@@ -25,7 +25,7 @@ export class UsersService {
     if (dto.roleIds) {
       await createdUser.$set("roles", dto.roleIds);
     }
-    const user = await this.userModel.findByPk(createdUser.id, {});
+    const user = await this.userModel.findByPkOrThrow(createdUser.id);
     return new UserDto(user);
   }
 
@@ -70,11 +70,7 @@ export class UsersService {
   }
 
   async update(id: number, dto: UpdateUserDto) {
-    const user = await this.userModel.findByPk(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
-
+    const user = await this.userModel.findByPkOrThrow(id);
     if (dto.roleIds) {
       await user.$set("roles", dto.roleIds);
     }
@@ -83,72 +79,49 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    const user = await this.userModel.findByPk(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
+    const user = await this.userModel.findByPkOrThrow(id);
     await user.destroy();
     return new UserDto(user);
   }
 
   async getMe(id: number) {
-    const user = await this.userModel.findByPk(id, {});
+    const user = await this.userModel.findByPkOrThrow(id);
     return new UserDto(user);
   }
   async addRoles(id: number, roleIds: number[]) {
-    const user = await this.userModel.findByPk(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
-
+    const user = await this.userModel.findByPkOrThrow(id);
     await user.$set("roles", roleIds);
     return new UserDto(user);
   }
 
   async removeRoles(id: number, roleIds: number[]) {
-    const user = await this.userModel.findByPk(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
-
+    const user = await this.userModel.findByPkOrThrow(id);
     await user.$remove("roles", roleIds);
     return new UserDto(user);
   }
 
   async findRoles(id: number) {
-    const user = await this.userModel.findByPk(id, {
+    const user = await this.userModel.findByPkOrThrow(id, {
       include: ["roles"],
     });
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
     return user.roles.map((role) => new RoleDto(role));
   }
 
   async findPermissions(id: number) {
-    const user = await this.userModel.findByPk(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
+    const user = await this.userModel.findByPkOrThrow(id);
     const permissions = await user.$get("permissions");
     return permissions.map((permission) => new PermissionDto(permission));
   }
 
   async addPermissions(id: number, permissionsId: number[]) {
-    const user = await this.userModel.findByPk(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
+    const user = await this.userModel.findByPkOrThrow(id);
     await user.$add("permissions", permissionsId);
     const permissions = await user.$get("permissions");
     return permissions.map((permission) => new PermissionDto(permission));
   }
 
   async removePermissions(id: number, permissionsId: number[]) {
-    const user = await this.userModel.findByPk(id);
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
+    const user = await this.userModel.findByPkOrThrow(id);
     await user.$remove("permissions", permissionsId);
     const permissions = await user.$get("permissions");
     return permissions.map((permission) => new PermissionDto(permission));

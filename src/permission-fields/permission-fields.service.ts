@@ -1,17 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from "@nestjs/common";
 import {
   CreatePermissionFieldDto,
   UpdatePermissionFieldDto,
   PermissionFieldDto,
-} from './dto';
-import { PermissionFieldModel } from './model';
-import { InjectModel } from '@nestjs/sequelize';
+} from "./dto";
+import { PermissionFieldModel } from "./model";
+import { InjectModel } from "@nestjs/sequelize";
 
 @Injectable()
 export class PermissionFieldsService {
   constructor(
     @InjectModel(PermissionFieldModel)
-    private permissionFieldModel: typeof PermissionFieldModel,
+    private permissionFieldModel: typeof PermissionFieldModel
   ) {}
   async create(createPermissionFieldDto: CreatePermissionFieldDto) {
     const permissionField = await this.permissionFieldModel.create({
@@ -23,34 +23,25 @@ export class PermissionFieldsService {
   async findAll() {
     const permissionFields = await this.permissionFieldModel.findAll();
     return permissionFields.map(
-      (permissionField) => new PermissionFieldDto(permissionField),
+      (permissionField) => new PermissionFieldDto(permissionField)
     );
   }
 
   async findOne(id: number) {
-    const permissionField = await this.permissionFieldModel.findByPk(id);
-    if (!permissionField) {
-      throw new NotFoundException('Permission Field not found');
-    }
+    const permissionField = await this.permissionFieldModel.findByPkOrThrow(id);
     return new PermissionFieldDto(permissionField);
   }
 
   async update(id: number, updatePermissionFieldDto: UpdatePermissionFieldDto) {
-    const permissionField = await this.permissionFieldModel.findByPk(id);
-    if (!permissionField) {
-      throw new NotFoundException('Permission Field not found');
-    }
+    const permissionField = await this.permissionFieldModel.findByPkOrThrow(id);
     const updatedPermissionField = await permissionField.update(
-      updatePermissionFieldDto,
+      updatePermissionFieldDto
     );
     return new PermissionFieldDto(updatedPermissionField);
   }
 
   async remove(id: number) {
-    const permissionField = await this.permissionFieldModel.findByPk(id);
-    if (!permissionField) {
-      throw new NotFoundException('Permission Field not found');
-    }
+    const permissionField = await this.permissionFieldModel.findByPkOrThrow(id);
     await permissionField.destroy();
     return new PermissionFieldDto(permissionField);
   }

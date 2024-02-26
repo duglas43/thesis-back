@@ -30,18 +30,18 @@ export class ParamsService {
   }
 
   async findOne(id: number) {
-    const param = await this.paramEntity.findByPk(id);
+    const param = await this.paramEntity.findByPkOrThrow(id);
     return new ParamDto(param);
   }
 
   async update(id: number, dto: UpdateParamDto) {
-    const param = await this.paramEntity.findByPk(id);
+    const param = await this.paramEntity.findByPkOrThrow(id);
     await param.update(dto);
     return new ParamDto(param);
   }
 
   async remove(id: number) {
-    const param = await this.paramEntity.findByPk(id);
+    const param = await this.paramEntity.findByPkOrThrow(id);
     await param.destroy();
     return new ParamDto(param);
   }

@@ -33,29 +33,19 @@ export class OrdersService {
   }
 
   async findOne(id: number) {
-    const order = await this.orderEntity.findByPk(id);
-    if (!order) {
-      throw new NotFoundException();
-    }
+    const order = await this.orderEntity.findByPkOrThrow(id);
     return new OrderDto(order);
   }
 
   async update(id: number, dto: UpdateOrderDto) {
-    const order = await this.orderEntity.findByPk(id);
-    if (!order) {
-      throw new NotFoundException();
-    }
+    const order = await this.orderEntity.findByPkOrThrow(id);
 
     await this.orderEntity.update(dto, { where: { id } });
     return new OrderDto(order);
   }
 
   async remove(id: number) {
-    const order = await this.orderEntity.findByPk(id);
-    if (!order) {
-      throw new NotFoundException();
-    }
-
+    const order = await this.orderEntity.findByPkOrThrow(id);
     await order.destroy();
     return new OrderDto(order);
   }
@@ -63,20 +53,13 @@ export class OrdersService {
     id: number,
     { machineId, count }: { machineId: number; count: number }
   ) {
-    const order = await this.orderEntity.findByPk(id);
-    if (!order) {
-      throw new NotFoundException();
-    }
-
+    const order = await this.orderEntity.findByPkOrThrow(id);
     await order.$add("machines", machineId, { through: { count } });
     return new OrderDto(order);
   }
 
   async removeMachine(id: number, machineId: number) {
-    const order = await this.orderEntity.findByPk(id);
-    if (!order) {
-      throw new NotFoundException();
-    }
+    const order = await this.orderEntity.findByPkOrThrow(id);
     await order.$remove("machines", machineId);
     return new OrderDto(order);
   }
