@@ -1,5 +1,4 @@
 import { Model, ModelCtor } from "sequelize-typescript";
-import { Optional } from "sequelize";
 import { FindOptions, Identifier } from "sequelize/types";
 import { NotFoundException } from "@nestjs/common";
 

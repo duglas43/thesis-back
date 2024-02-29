@@ -352,3 +352,15 @@ CREATE TABLE IF NOT EXISTS `thesis`.`UserPermission` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `thesis`.`Page`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `thesis`.`Page` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
+  `createdAt` DATETIME NULL,
+  `updatedAt` DATETIME NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+

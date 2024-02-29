@@ -42,6 +42,8 @@ import { PermissionFieldsModule } from "./permission-fields/permission-fields.mo
 import { PermissionConditionsModule } from "./permission-conditions/permission-conditions.module";
 import { PermissionsModule } from "./permissions/permissions.module";
 import { SubjectsModule } from "./subjects/subjects.module";
+import { PagesModule } from "./pages/pages.module";
+import { PageModel } from "./pages/model";
 
 @Module({
   imports: [
@@ -80,6 +82,7 @@ import { SubjectsModule } from "./subjects/subjects.module";
         SubjectModel,
         UserPermissionModel,
         RolePermissionModel,
+        PageModel,
       ],
     }),
     AddressesModule,
@@ -94,6 +97,7 @@ import { SubjectsModule } from "./subjects/subjects.module";
     PermissionConditionsModule,
     PermissionsModule,
     SubjectsModule,
+    PagesModule,
   ],
   controllers: [AppController],
   providers: [
