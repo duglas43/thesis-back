@@ -22,6 +22,7 @@ import {
   AppApiUnauthorizedResponse,
   AppApiNotFoundResponse,
   AppApiForbiddenResponse,
+  ApiListResponse,
 } from "src/common/swagger/decorators";
 import { CheckPolicies } from "src/casl/decorator";
 import { RoleModel } from "./model/role.model";
@@ -47,6 +48,12 @@ export class RolesController {
   @ApiOkResponse({ type: RoleDto, isArray: true })
   findAll(@Query() findRoleDto: FindRoleDto) {
     return this.rolesService.findAll(findRoleDto);
+  }
+
+  @Get("/paginated")
+  @ApiListResponse(RoleDto)
+  findAllPaginated(@Query() findRoleDto: FindRoleDto) {
+    return this.rolesService.findAllPaginated(findRoleDto);
   }
 
   @Get(":id")

@@ -4,6 +4,8 @@ import { RoleModel } from "./model/role.model";
 import { InjectModel } from "@nestjs/sequelize";
 import { Op } from "sequelize";
 import { PermissionDto } from "src/permissions/dto";
+import { ListResponseDto } from "src/common/dto";
+import { ORDER } from "src/common/enum";
 
 @Injectable()
 export class RolesService {
@@ -27,6 +29,40 @@ export class RolesService {
       },
     });
     return roles.map((role) => new RoleDto(role));
+  }
+
+  // TODO: Search doesn't work without limit
+  async findAllPaginated(dto: FindRoleDto) {
+    const { rows, count } = await this.roleModel.findAndCountAll({
+      where: {
+        [Op.and]: [
+          dto.query && {
+            [Op.or]: [
+              { name: { [Op.like]: `%${dto.query}%` } },
+              { description: { [Op.like]: `%${dto.query}%` } },
+            ],
+          },
+        ].filter(Boolean),
+      },
+      ...(dto.order && { order: [["id", dto.order]] }),
+      ...(dto.sort && { order: [[dto.sort]] }),
+      ...(dto.sort && dto.order && { order: [[dto.sort, dto.order]] }),
+      ...(dto.limit && { limit: dto.limit }),
+      ...(dto.page && { offset: dto.limit * dto.page }),
+    });
+
+    return new ListResponseDto<RoleDto>(
+      rows.map((role) => new RoleDto(role)),
+      {
+        totalCount: count,
+        pageCount: Math.ceil(count / dto.limit) || 1,
+        resultCount: rows.length,
+        page: dto.page || 1,
+        limit: dto.limit || count,
+        order: dto.order || ORDER.ASC,
+        sort: dto.sort || "id",
+      }
+    );
   }
 
   async findOne(id: number) {
