@@ -89,7 +89,8 @@ export class UsersController {
   @ApiOkResponse({ type: UserDto })
   addRoles(
     @Param("id", ParseIntPipe) id: number,
-    @Body("roleIds", ParseIntPipe) roleIds: number[]
+    @Body("roleIds", new ParseArrayPipe({ items: Number, separator: "," }))
+    roleIds: number[]
   ) {
     return this.usersService.addRoles(id, roleIds);
   }
@@ -99,7 +100,8 @@ export class UsersController {
   @ApiOkResponse({ type: UserDto })
   removeRoles(
     @Param("id", ParseIntPipe) id: number,
-    @Body("roleIds", ParseIntPipe) roleIds: number[]
+    @Body("roleIds", new ParseArrayPipe({ items: Number, separator: "," }))
+    roleIds: number[]
   ) {
     return this.usersService.removeRoles(id, roleIds);
   }

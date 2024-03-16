@@ -27,10 +27,8 @@ import {
   AppApiUnauthorizedResponse,
   AppApiNotFoundResponse,
   AppApiForbiddenResponse,
+  ApiListResponse,
 } from "src/common/swagger/decorators";
-import { CheckPolicies } from "src/casl/decorator";
-import { ACTIONS } from "src/casl/enum";
-import { DetailModel } from "./model/detail.model";
 
 @ApiBearerAuth()
 @AppApiUnauthorizedResponse()
@@ -48,7 +46,7 @@ export class DetailsController {
   }
 
   @Get()
-  @ApiOkResponse({ type: DetailDto, isArray: true })
+  @ApiListResponse(DetailDto)
   findAll(@Query() findDetailDto: FindDetailDto) {
     return this.detailsService.findAll(findDetailDto);
   }

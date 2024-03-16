@@ -9,6 +9,8 @@ import { DetailModel } from "./model/detail.model";
 import { InjectModel } from "@nestjs/sequelize";
 import { Op } from "sequelize";
 import { ParamModel } from "src/params/model/param.model";
+import { ListResponseDto } from "../common/dto";
+import { ORDER } from "../common/enum";
 
 @Injectable()
 export class DetailsService {
@@ -25,15 +27,36 @@ export class DetailsService {
   }
 
   async findAll(dto: FindDetailDto) {
-    const details = await this.detailEntity.findAll({
+    const { rows, count } = await this.detailEntity.findAndCountAll({
       where: {
-        [Op.or]: [
-          { name: { [Op.like]: `%${dto.query}%` } },
-          { partNumber: { [Op.like]: `%${dto.query}%` } },
-        ],
+        [Op.and]: [
+          dto.query && {
+            [Op.or]: [
+              { name: { [Op.like]: `%${dto.query}%` } },
+              { partNumber: { [Op.like]: `%${dto.query}%` } },
+            ],
+          },
+        ].filter(Boolean),
       },
+      ...(dto.order && { order: [["id", dto.order]] }),
+      ...(dto.sort && { order: [[dto.sort]] }),
+      ...(dto.sort && dto.order && { order: [[dto.sort, dto.order]] }),
+      ...(dto.limit && { limit: dto.limit }),
+      ...(dto.page && { offset: dto.limit * dto.page }),
     });
-    return details.map((detail) => new DetailDto(detail));
+    const response = new ListResponseDto<DetailDto>(
+      rows.map((detail) => new DetailDto(detail)),
+      {
+        totalCount: count,
+        pageCount: Math.ceil(count / dto.limit) || 1,
+        resultCount: rows.length,
+        page: dto.page || 1,
+        limit: dto.limit || count,
+        order: dto.order || ORDER.ASC,
+        sort: dto.sort || "id",
+      }
+    );
+    return response;
   }
 
   async findOne(id: number) {

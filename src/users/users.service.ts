@@ -90,7 +90,7 @@ export class UsersService {
   }
   async addRoles(id: number, roleIds: number[]) {
     const user = await this.userModel.findByPkOrThrow(id);
-    await user.$set("roles", roleIds);
+    await user.$add("roles", roleIds);
     return new UserDto(user);
   }
 

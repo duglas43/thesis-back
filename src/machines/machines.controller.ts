@@ -26,6 +26,7 @@ import {
   AppApiUnauthorizedResponse,
   AppApiNotFoundResponse,
   AppApiForbiddenResponse,
+  ApiListResponse,
 } from "src/common/swagger/decorators";
 
 @ApiBearerAuth()
@@ -44,7 +45,7 @@ export class MachinesController {
   }
 
   @Get()
-  @ApiOkResponse({ type: MachineDto, isArray: true })
+  @ApiListResponse(MachineDto)
   findAll(@Query() findMachineDto: FindMachineDto) {
     return this.machinesService.findAll(findMachineDto);
   }
