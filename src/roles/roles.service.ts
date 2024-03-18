@@ -83,12 +83,16 @@ export class RolesService {
   }
 
   async findPermissions(id: number) {
-    const role = await this.roleModel.findByPkOrThrow(id);
+    const role = await this.roleModel.findByPkOrThrow(id, {
+      include: {
+        association: "permissions",
+        include: ["fields", "conditions"],
+      },
+    });
     if (!role) {
       throw new NotFoundException("Role not found");
     }
-    const permissions = await role.$get("permissions");
-    return permissions.map((permission) => new PermissionDto(permission));
+    return role.permissions.map((permission) => new PermissionDto(permission));
   }
 
   async addPermissions(id: number, permissionsId: number[]) {

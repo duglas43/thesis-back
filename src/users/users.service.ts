@@ -108,9 +108,13 @@ export class UsersService {
   }
 
   async findPermissions(id: number) {
-    const user = await this.userModel.findByPkOrThrow(id);
-    const permissions = await user.$get("permissions");
-    return permissions.map((permission) => new PermissionDto(permission));
+    const user = await this.userModel.findByPkOrThrow(id, {
+      include: {
+        association: "permissions",
+        include: ["fields", "conditions"],
+      },
+    });
+    return user.permissions.map((permission) => new PermissionDto(permission));
   }
 
   async addPermissions(id: number, permissionsId: number[]) {
