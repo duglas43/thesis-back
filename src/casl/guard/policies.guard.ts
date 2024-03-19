@@ -6,10 +6,15 @@ import {
   CHECK_POLICIES_KEY,
 } from "../decorator/check-policies.decorator";
 import { IS_PUBLIC_KEY } from "src/auth/decorator";
+import { CaslAbilityFactory } from "../casl-ability.factory/casl-ability.factory";
+import { mapStringClass } from "../util";
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private reflector: Reflector,
+    private caslAbilityFactory: CaslAbilityFactory
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -19,6 +24,10 @@ export class PoliciesGuard implements CanActivate {
     if (isPublic) {
       return true;
     }
+    const { user } = context.switchToHttp().getRequest();
+    const ability = await this.caslAbilityFactory.createForUser(user);
+    context.switchToHttp().getRequest().ability = ability;
+
     const policyHandlers =
       this.reflector.get<PolicyHandler[]>(
         CHECK_POLICIES_KEY,
@@ -28,8 +37,6 @@ export class PoliciesGuard implements CanActivate {
     if (policyHandlers.length === 0) {
       return true;
     }
-    const { user } = context.switchToHttp().getRequest();
-    const ability = user.ability as AppAbility;
 
     return policyHandlers.every((handler) =>
       this.execPolicyHandler(handler, ability)

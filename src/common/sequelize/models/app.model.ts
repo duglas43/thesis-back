@@ -6,7 +6,9 @@ export class AppModel<T extends Model<T>> extends Model<T, any> {
   constructor(...args: any[]) {
     super(...args);
   }
-
+  static get modelName() {
+    return this.getTableName();
+  }
   static async findByPkOrThrow<T extends Model<T, any>>(
     this: ModelCtor<T>,
     id: Identifier,

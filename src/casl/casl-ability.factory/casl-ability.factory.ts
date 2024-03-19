@@ -3,44 +3,16 @@ import {
   MongoAbility,
   createMongoAbility,
   AbilityBuilder,
-  InferSubjects,
-  ExtractSubjectType,
 } from "@casl/ability";
 import { ACTIONS } from "../enum";
 import { ROLES } from "src/roles/enum";
 import { InjectModel } from "@nestjs/sequelize";
-import { RoleModel } from "src/roles/model/role.model";
-import { UserRoleModel, UserModel, UserPermissionModel } from "src/users/model";
-import { AddressModel } from "src/addresses/model";
-import { OrderModel } from "src/orders/model/order.model";
-import { DetailModel } from "src/details/model/detail.model";
-import { OrderMachineModel } from "src/orders/model/order-machine.model";
-import { MachineModel } from "src/machines/model/machine.model";
-import { MachineDetailModel } from "src/machines/model/machine-detail.model";
-import { ParamModel } from "src/params/model/param.model";
-import { DetailParamModel } from "src/details/model/detail-param.model";
+import { UserModel } from "src/users/model";
 import { PermissionModel } from "src/permissions/model";
-
-type Subjects =
-  | InferSubjects<
-      | typeof UserModel
-      | typeof UserRoleModel
-      | typeof RoleModel
-      | typeof AddressModel
-      | typeof OrderModel
-      | typeof DetailModel
-      | typeof OrderMachineModel
-      | typeof MachineModel
-      | typeof MachineDetailModel
-      | typeof ParamModel
-      | typeof DetailParamModel
-      | typeof PermissionModel
-      | typeof UserPermissionModel
-    >
-  | "all";
+import { Subjects } from "../type";
+import { mapStringClass } from "../util";
 
 export type AppAbility = MongoAbility<[ACTIONS, Subjects]>;
-
 @Injectable()
 export class CaslAbilityFactory {
   constructor(
@@ -82,7 +54,7 @@ export class CaslAbilityFactory {
     cannot(ACTIONS.MANAGE, "all");
     sortedUserRolesPermissions.forEach((permission) => {
       const fields = permission.fields.map((field) => field.name);
-      const subject = permission.subject.name as any;
+      const subject = mapStringClass(permission.subject.name);
       rules.push({
         action: permission.action,
         subject,
@@ -94,7 +66,7 @@ export class CaslAbilityFactory {
     });
     sortedUserPermissions.forEach((permission) => {
       const fields = permission.fields.map((field) => field.name);
-      const subject = permission.subject.name as any;
+      const subject = mapStringClass(permission.subject.name);
       rules.push({
         action: permission.action,
         subject,
@@ -107,10 +79,7 @@ export class CaslAbilityFactory {
     if (userRoles.some((role) => role.name === ROLES.ADMIN)) {
       can(ACTIONS.MANAGE, "all");
     }
-    return build({
-      detectSubjectType: (item) =>
-        item.constructor as ExtractSubjectType<Subjects>,
-    });
+    return build();
   }
 
   /**

@@ -24,8 +24,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
       where: { id: payload.sub },
       include: ["roles"],
     });
-    const ability = this.caslAbilityFactory.createForUser(user);
-    user["ability"] = ability;
     return user;
   }
 }
