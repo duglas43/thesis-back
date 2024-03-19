@@ -1,5 +1,4 @@
 import { Column, Model, Table, HasMany, BelongsTo } from "sequelize-typescript";
-import { PermissionConditionModel } from "src/permission-conditions/model";
 import { PermissionFieldModel } from "src/permission-fields/model";
 import { SubjectModel } from "src/subjects/model";
 import { ACTIONS } from "src/casl/enum";
@@ -26,26 +25,24 @@ export class PermissionModel extends AppModel<PermissionModel> {
   @Column
   reason: string;
 
+  @Column
+  condition: string;
+
   @HasMany(() => PermissionFieldModel, "permissionId")
   fields: PermissionFieldModel[];
 
-  @HasMany(() => PermissionConditionModel, "permissionId")
-  conditions: PermissionConditionModel[];
-
   /**
-   * @param conditions: [{key: "departmentId", value: "${id}"}, {key: "name", value: "admin"}]
+   * @param condition: {"departmentId": "${id}"}
    * @param variables: {"id: 1"}
    * @return condition after parse: {"departmentId": 1}
    */
   public static parseCondition(
-    conditions: PermissionConditionModel[],
+    condition: any,
     variables: Record<string, any>
-  ) {
-    if (!conditions || !Array.isArray(conditions) || conditions.length === 0)
-      return null;
+  ): any {
+    if (!condition) return null;
     const parsedCondition = {};
-    for (const condition of conditions) {
-      const { key, value: rawValue } = condition;
+    for (const [key, rawValue] of Object.entries(condition)) {
       if (rawValue !== null && typeof rawValue === "object") {
         const value = this.parseCondition(rawValue, variables);
         parsedCondition[key] = value;

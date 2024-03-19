@@ -16,17 +16,6 @@ class PermissionField {
   @IsNotEmpty()
   name: string;
 }
-class PermissionCondition {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  key: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  value: string;
-}
 export class CreatePermissionDto {
   @ApiProperty()
   @IsInt()
@@ -42,14 +31,14 @@ export class CreatePermissionDto {
   @IsArray()
   fields?: PermissionField[];
 
-  @ApiPropertyOptional({ type: [PermissionCondition] })
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsArray()
-  conditions?: PermissionCondition[];
+  @IsString()
+  condition?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsBoolean()
+  @IsString()
   reason?: string;
 
   @ApiProperty({ enum: ACTIONS, enumName: "ACTIONS" })

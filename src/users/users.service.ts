@@ -111,7 +111,7 @@ export class UsersService {
     const user = await this.userModel.findByPkOrThrow(id, {
       include: {
         association: "permissions",
-        include: ["fields", "conditions"],
+        include: ["fields"],
       },
     });
     return user.permissions.map((permission) => new PermissionDto(permission));

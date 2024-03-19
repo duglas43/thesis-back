@@ -31,13 +31,13 @@ export class CaslAbilityFactory {
           include: [
             {
               association: "permissions",
-              include: ["fields", "conditions", "subject"],
+              include: ["fields", "subject"],
             },
           ],
         },
         {
           association: "permissions",
-          include: ["fields", "conditions", "subject"],
+          include: ["fields", "subject"],
         },
       ],
     });
@@ -58,7 +58,10 @@ export class CaslAbilityFactory {
       rules.push({
         action: permission.action,
         subject,
-        conditions: PermissionModel.parseCondition(permission.conditions, user),
+        conditions: PermissionModel.parseCondition(
+          JSON.parse(permission.condition),
+          user
+        ),
         fields: fields.length > 0 ? fields : undefined,
         inverted: !permission.modality,
         reason: permission.reason,
@@ -70,7 +73,10 @@ export class CaslAbilityFactory {
       rules.push({
         action: permission.action,
         subject,
-        conditions: PermissionModel.parseCondition(permission.conditions, user),
+        conditions: PermissionModel.parseCondition(
+          JSON.parse(permission.condition),
+          user
+        ),
         fields: fields.length > 0 ? fields : undefined,
         inverted: !permission.modality,
         reason: permission.reason,
@@ -112,11 +118,11 @@ export class CaslAbilityFactory {
    * );
    *
    * const canEntries = permissions.filter(
-   *   (permission) => permission.conditions.length > 0 && permission.modality,
+   *   (permission) => permission.condition && permission.modality,
    * );
    *
    * const cannotEntries = permissions.filter(
-   *   (permission) => permission.conditions.length > 0 && !permission.modality,
+   *   (permission) => permission.condition && !permission.modality,
    * );
    *
    * const canField = permissions.filter(
@@ -144,16 +150,13 @@ export class CaslAbilityFactory {
     const sortedPermissions = [];
 
     permissions.forEach((permission) => {
-      if (
-        permission.conditions.length === 0 &&
-        permission.fields.length === 0
-      ) {
+      if (!permission.condition && permission.fields.length === 0) {
         if (permission.modality) {
           sortedPermissions.unshift(permission);
         } else {
           sortedPermissions.push(permission);
         }
-      } else if (permission.conditions.length > 0) {
+      } else if (permission.condition) {
         if (permission.modality) {
           sortedPermissions.unshift(permission);
         } else {

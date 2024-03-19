@@ -86,7 +86,7 @@ export class RolesService {
     const role = await this.roleModel.findByPkOrThrow(id, {
       include: {
         association: "permissions",
-        include: ["fields", "conditions"],
+        include: ["fields"],
       },
     });
     if (!role) {

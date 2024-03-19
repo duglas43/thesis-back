@@ -11,7 +11,6 @@ import { MachineDetailModel } from "src/machines/model/machine-detail.model";
 import { ParamModel } from "src/params/model/param.model";
 import { DetailParamModel } from "src/details/model/detail-param.model";
 import { PermissionModel } from "src/permissions/model";
-import { PermissionConditionModel } from "src/permission-conditions/model";
 import { UserPermissionModel } from "src/users/model";
 import { RolePermissionModel } from "src/roles/model";
 import { PermissionFieldModel } from "src/permission-fields/model";
@@ -32,7 +31,6 @@ export type AppSubjects =
       | typeof ParamModel
       | typeof DetailParamModel
       | typeof PermissionModel
-      | typeof PermissionConditionModel
       | typeof UserPermissionModel
       | typeof RolePermissionModel
       | typeof PermissionFieldModel

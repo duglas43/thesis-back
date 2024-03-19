@@ -24,7 +24,6 @@ import { MachineDetailModel } from "./machines/model/machine-detail.model";
 import { ParamModel } from "./params/model/param.model";
 import { DetailParamModel } from "./details/model/detail-param.model";
 import { PermissionModel } from "./permissions/model";
-import { PermissionConditionModel } from "./permission-conditions/model";
 import { UserPermissionModel } from "./users/model";
 import { RolePermissionModel } from "./roles/model";
 import { PermissionFieldModel } from "./permission-fields/model";
@@ -39,7 +38,6 @@ import { MulterConfigModule } from "./common/multer-config/multer-config.module"
 import { PipesModule } from "./common/pipes/pipes.module";
 import { HealthModule } from "./health/health.module";
 import { PermissionFieldsModule } from "./permission-fields/permission-fields.module";
-import { PermissionConditionsModule } from "./permission-conditions/permission-conditions.module";
 import { PermissionsModule } from "./permissions/permissions.module";
 import { SubjectsModule } from "./subjects/subjects.module";
 import { PagesModule } from "./pages/pages.module";
@@ -77,7 +75,6 @@ import { PageModel } from "./pages/model";
         OrderModel,
         OrderMachineModel,
         PermissionModel,
-        PermissionConditionModel,
         PermissionFieldModel,
         SubjectModel,
         UserPermissionModel,
@@ -94,7 +91,6 @@ import { PageModel } from "./pages/model";
     // ExceptionFiltersModule,
     HealthModule,
     PermissionFieldsModule,
-    PermissionConditionsModule,
     PermissionsModule,
     SubjectsModule,
     PagesModule,

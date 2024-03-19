@@ -1,18 +1,37 @@
-import { IsString, IsInt, IsBoolean, IsEnum } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import {
+  IsString,
+  IsInt,
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+} from "class-validator";
+import { ApiPropertyOptional } from "@nestjs/swagger";
 import { ACTIONS } from "src/casl/enum";
 
 export class UpdatePermissionDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsInt()
   subjectId: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsBoolean()
   modality: boolean;
 
-  @ApiProperty({ enum: ACTIONS, enumName: "ACTIONS" })
+  @ApiPropertyOptional({ enum: ACTIONS, enumName: "ACTIONS" })
+  @IsOptional()
   @IsEnum(ACTIONS)
   @IsString()
   action: ACTIONS;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  reason: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  condition: string;
 }

@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { PermissionFieldDto } from "src/permission-fields/dto";
-import { PermissionConditionDto } from "src/permission-conditions/dto";
 import { ACTIONS } from "src/casl/enum";
 
 export class PermissionDto {
@@ -19,8 +18,8 @@ export class PermissionDto {
   @ApiProperty({ type: [PermissionFieldDto] })
   fields: PermissionFieldDto[];
 
-  @ApiProperty({ type: [PermissionConditionDto] })
-  conditions: PermissionConditionDto[];
+  @ApiProperty()
+  condition: string;
 
   @ApiProperty({ nullable: true })
   reason: string;
@@ -37,7 +36,7 @@ export class PermissionDto {
     this.modality = model.modality;
     this.action = model.action;
     this.fields = model.fields;
-    this.conditions = model.conditions;
+    this.condition = model.condition;
     this.createdAt = model.createdAt;
     this.updatedAt = model.updatedAt;
   }

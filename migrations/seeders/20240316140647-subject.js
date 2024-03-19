@@ -87,32 +87,27 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+
       {
         id: 15,
-        name: "PermissionCondition",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: 16,
         name: "RolePermission",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        id: 17,
+        id: 16,
         name: "UserPermission",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        id: 18,
+        id: 17,
         name: "Page",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        id: 19,
+        id: 18,
         name: "all",
         createdAt: new Date(),
         updatedAt: new Date(),
