@@ -9,10 +9,9 @@ import { ROLES } from "src/roles/enum";
 import { InjectModel } from "@nestjs/sequelize";
 import { UserModel } from "src/users/model";
 import { PermissionModel } from "src/permissions/model";
-import { Subjects } from "../type";
-import { mapStringClass } from "../util";
+import { SUBJECTS } from "../enum";
 
-export type AppAbility = MongoAbility<[ACTIONS, Subjects]>;
+export type AppAbility = MongoAbility<[ACTIONS, SUBJECTS]>;
 @Injectable()
 export class CaslAbilityFactory {
   constructor(
@@ -51,10 +50,10 @@ export class CaslAbilityFactory {
       this.sortPermissions(userRolesPermissions);
     const sortedUserPermissions = this.sortPermissions(userPermissions);
 
-    cannot(ACTIONS.MANAGE, "all");
+    cannot(ACTIONS.MANAGE, SUBJECTS.ALL);
     sortedUserRolesPermissions.forEach((permission) => {
       const fields = permission.fields.map((field) => field.name);
-      const subject = mapStringClass(permission.subject.name);
+      const subject = permission.subject.name as any;
       rules.push({
         action: permission.action,
         subject,
@@ -66,7 +65,7 @@ export class CaslAbilityFactory {
     });
     sortedUserPermissions.forEach((permission) => {
       const fields = permission.fields.map((field) => field.name);
-      const subject = mapStringClass(permission.subject.name);
+      const subject = permission.subject.name as any;
       rules.push({
         action: permission.action,
         subject,
@@ -77,7 +76,7 @@ export class CaslAbilityFactory {
       });
     });
     if (userRoles.some((role) => role.name === ROLES.ADMIN)) {
-      can(ACTIONS.MANAGE, "all");
+      can(ACTIONS.MANAGE, SUBJECTS.ALL);
     }
     return build();
   }

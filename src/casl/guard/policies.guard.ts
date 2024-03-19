@@ -7,7 +7,6 @@ import {
 } from "../decorator/check-policies.decorator";
 import { IS_PUBLIC_KEY } from "src/auth/decorator";
 import { CaslAbilityFactory } from "../casl-ability.factory/casl-ability.factory";
-import { mapStringClass } from "../util";
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {

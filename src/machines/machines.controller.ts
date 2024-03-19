@@ -31,8 +31,7 @@ import {
 import { CheckPolicies } from "src/casl/decorator";
 import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
 import { ACTIONS } from "src/casl/enum";
-import { MachineModel } from "./model";
-import { GetUser } from "src/auth/decorator";
+import { SUBJECTS } from "src/casl/enum";
 
 @ApiBearerAuth()
 @AppApiUnauthorizedResponse()
@@ -45,7 +44,7 @@ export class MachinesController {
 
   @Post()
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(ACTIONS.CREATE, MachineModel)
+    ability.can(ACTIONS.CREATE, SUBJECTS.MACHINE)
   )
   @ApiCreatedResponse({ type: MachineDto })
   create(@Body() createMachineDto: CreateMachineDto) {
@@ -54,7 +53,7 @@ export class MachinesController {
 
   @Get()
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(ACTIONS.READ, MachineModel)
+    ability.can(ACTIONS.READ, SUBJECTS.MACHINE)
   )
   @ApiListResponse(MachineDto)
   findAll(@Query() findMachineDto: FindMachineDto) {
@@ -63,7 +62,7 @@ export class MachinesController {
 
   @Get(":id")
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(ACTIONS.READ, MachineModel)
+    ability.can(ACTIONS.READ, SUBJECTS.MACHINE)
   )
   @ApiOkResponse({ type: MachineDto })
   findOne(@Param("id", ParseIntPipe) id: number) {
@@ -72,7 +71,7 @@ export class MachinesController {
 
   @Patch(":id")
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(ACTIONS.UPDATE, MachineModel)
+    ability.can(ACTIONS.UPDATE, SUBJECTS.MACHINE)
   )
   @ApiOkResponse({ type: MachineDto })
   update(
@@ -84,7 +83,7 @@ export class MachinesController {
 
   @Delete(":id")
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(ACTIONS.DELETE, MachineModel)
+    ability.can(ACTIONS.DELETE, SUBJECTS.MACHINE)
   )
   @ApiOkResponse({ type: MachineDto })
   remove(@Param("id", ParseIntPipe) id: number) {
