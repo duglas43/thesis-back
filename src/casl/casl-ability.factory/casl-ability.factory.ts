@@ -9,9 +9,10 @@ import { ROLES } from "src/roles/enum";
 import { InjectModel } from "@nestjs/sequelize";
 import { UserModel } from "src/users/model";
 import { PermissionModel } from "src/permissions/model";
+import { AppSubjects } from "src/casl/type";
 import { SUBJECTS } from "../enum";
 
-export type AppAbility = MongoAbility<[ACTIONS, SUBJECTS]>;
+export type AppAbility = MongoAbility<[ACTIONS, AppSubjects]>;
 @Injectable()
 export class CaslAbilityFactory {
   constructor(

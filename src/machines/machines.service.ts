@@ -10,6 +10,8 @@ import { MachineModel } from "./model/machine.model";
 import { Op } from "sequelize";
 import { ListResponseDto } from "src/common/dto";
 import { ORDER } from "src/common/enum";
+import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
+import { ACTIONS } from "src/casl/enum";
 
 @Injectable()
 export class MachinesService {
@@ -23,7 +25,7 @@ export class MachinesService {
     return new MachineDto(machine);
   }
 
-  async findAll(dto: FindMachineDto) {
+  async findAll(dto: FindMachineDto, ability: AppAbility) {
     const { rows, count } = await this.machineModel.findAndCountAll({
       where: {
         [Op.and]: [
@@ -41,8 +43,12 @@ export class MachinesService {
       ...(dto.limit && { limit: dto.limit }),
       ...(dto.page && { offset: dto.limit * dto.page }),
     });
+    const authorizedMachines = rows.filter((machine) =>
+      ability.can(ACTIONS.READ, machine)
+    );
+
     const response = new ListResponseDto<MachineDto>(
-      rows.map((user) => new MachineDto(user)),
+      authorizedMachines.map((machine) => new MachineDto(machine)),
       {
         totalCount: count,
         pageCount: Math.ceil(count / dto.limit) || 1,

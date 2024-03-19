@@ -28,10 +28,9 @@ import {
   AppApiForbiddenResponse,
   ApiListResponse,
 } from "src/common/swagger/decorators";
-import { CheckPolicies } from "src/casl/decorator";
+import { CheckPolicies, GetAbility } from "src/casl/decorator";
 import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
-import { ACTIONS } from "src/casl/enum";
-import { SUBJECTS } from "src/casl/enum";
+import { ACTIONS, SUBJECTS } from "src/casl/enum";
 
 @ApiBearerAuth()
 @AppApiUnauthorizedResponse()
@@ -56,8 +55,11 @@ export class MachinesController {
     ability.can(ACTIONS.READ, SUBJECTS.MACHINE)
   )
   @ApiListResponse(MachineDto)
-  findAll(@Query() findMachineDto: FindMachineDto) {
-    return this.machinesService.findAll(findMachineDto);
+  findAll(
+    @Query() findMachineDto: FindMachineDto,
+    @GetAbility() ability: AppAbility
+  ) {
+    return this.machinesService.findAll(findMachineDto, ability);
   }
 
   @Get(":id")
