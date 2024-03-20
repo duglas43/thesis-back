@@ -37,6 +37,7 @@ export class PermissionDto {
     this.action = model.action;
     this.fields = model.fields;
     this.condition = model.condition;
+    this.reason = model.reason;
     this.createdAt = model.createdAt;
     this.updatedAt = model.updatedAt;
   }
