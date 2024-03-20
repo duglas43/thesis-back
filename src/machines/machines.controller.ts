@@ -67,8 +67,11 @@ export class MachinesController {
     ability.can(ACTIONS.READ, SUBJECTS.MACHINE)
   )
   @ApiOkResponse({ type: MachineDto })
-  findOne(@Param("id", ParseIntPipe) id: number) {
-    return this.machinesService.findOne(id);
+  findOne(
+    @Param("id", ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility
+  ) {
+    return this.machinesService.findOne(id, ability);
   }
 
   @Patch(":id")
@@ -78,9 +81,10 @@ export class MachinesController {
   @ApiOkResponse({ type: MachineDto })
   update(
     @Param("id", ParseIntPipe) id: number,
-    @Body() updateMachineDto: UpdateMachineDto
+    @Body() updateMachineDto: UpdateMachineDto,
+    @GetAbility() ability: AppAbility
   ) {
-    return this.machinesService.update(id, updateMachineDto);
+    return this.machinesService.update(id, updateMachineDto, ability);
   }
 
   @Delete(":id")
@@ -88,7 +92,10 @@ export class MachinesController {
     ability.can(ACTIONS.DELETE, SUBJECTS.MACHINE)
   )
   @ApiOkResponse({ type: MachineDto })
-  remove(@Param("id", ParseIntPipe) id: number) {
-    return this.machinesService.remove(id);
+  remove(
+    @Param("id", ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility
+  ) {
+    return this.machinesService.remove(id, ability);
   }
 }

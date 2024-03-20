@@ -88,7 +88,7 @@ import { PageModel } from "./pages/model";
     LoggerModule,
     MulterConfigModule,
     PipesModule,
-    // ExceptionFiltersModule,
+    ExceptionFiltersModule,
     HealthModule,
     PermissionFieldsModule,
     PermissionsModule,

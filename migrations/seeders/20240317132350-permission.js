@@ -7,7 +7,7 @@ module.exports = {
         id: 1,
         modality: true,
         action: "manage",
-        subjectId: 19,
+        subjectId: 18,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
