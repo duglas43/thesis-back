@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 
 export class MachineDto {
   @ApiProperty()
@@ -10,6 +10,9 @@ export class MachineDto {
   @ApiProperty()
   partNumber: string | null;
 
+  @ApiProperty({ nullable: true })
+  price: number | null;
+
   @ApiProperty()
   createdAt: Date;
 
@@ -20,6 +23,7 @@ export class MachineDto {
     this.id = model?.id;
     this.name = model?.name;
     this.partNumber = model?.partNumber;
+    this.price = model?.price;
     this.createdAt = model?.createdAt;
     this.updatedAt = model?.updatedAt;
   }

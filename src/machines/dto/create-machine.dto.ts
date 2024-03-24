@@ -1,5 +1,5 @@
-import { IsString } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNumber } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateMachineDto {
   @ApiProperty()
@@ -9,4 +9,8 @@ export class CreateMachineDto {
   @ApiPropertyOptional()
   @IsString()
   partNumber: string;
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  price: number;
 }

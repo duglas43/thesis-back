@@ -13,6 +13,9 @@ export class MachineModel extends AppModel<MachineModel> {
   @Column
   partNumber: string;
 
+  @Column
+  price: number | null;
+
   @BelongsToMany(
     () => DetailModel,
     () => MachineDetailModel,
