@@ -29,6 +29,9 @@ import {
 } from "src/common/swagger/decorators";
 import { RoleDto } from "src/roles/dto";
 import { PermissionDto } from "src/permissions/dto";
+import { AbilityRuleDto } from "src/casl/dto";
+import { GetAbility } from "src/casl/decorator";
+import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
 
 @ApiBearerAuth()
 @AppApiUnauthorizedResponse()
@@ -57,6 +60,14 @@ export class UsersController {
     return new UserDto(user);
   }
 
+  @Get("me/ability/rules")
+  @ApiOkResponse({ type: [AbilityRuleDto] })
+  findMeAbilityRules(@GetAbility() ability: AppAbility) {
+    return ability.rules.map((rule) => new AbilityRuleDto(rule));
+  }
+
+  @Get("me/permissions-rules")
+  @ApiOkResponse({ type: [PermissionDto] })
   @Get(":id")
   @ApiOkResponse({ type: UserDto })
   findOne(@Param("id", ParseIntPipe) id: number) {
