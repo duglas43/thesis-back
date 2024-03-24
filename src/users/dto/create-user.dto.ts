@@ -40,6 +40,10 @@ export class CreateUserDto {
   @IsEnum(LANGUAGES)
   language: LANGUAGES;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  officeId: number | null;
+
   @ApiPropertyOptional({})
   @IsOptional()
   @IsInt({ each: true })

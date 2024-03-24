@@ -35,6 +35,10 @@ export class UpdateUserDto {
   @IsEnum(LANGUAGES)
   language: LANGUAGES;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  officeId: number | null;
+
   @ApiPropertyOptional({})
   @IsOptional()
   @IsInt({ each: true })

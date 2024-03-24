@@ -20,6 +20,9 @@ export class UserDto {
   @ApiProperty({ enum: LANGUAGES, enumName: "LANGUAGES" })
   language: LANGUAGES;
 
+  @ApiProperty({ nullable: true })
+  officeId: number | null;
+
   @ApiProperty()
   createdAt: Date;
 
@@ -33,6 +36,7 @@ export class UserDto {
     this.lastName = model?.lastName;
     this.patronymic = model?.patronymic;
     this.language = model?.language;
+    this.officeId = model?.officeId;
     this.createdAt = model?.createdAt;
     this.updatedAt = model?.updatedAt;
   }
