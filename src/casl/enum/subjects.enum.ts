@@ -12,5 +12,6 @@ export enum SUBJECTS {
   DETAIL_PARAM = "DetailParam",
   PERMISSION = "Permission",
   USER_PERMISSION = "UserPermission",
+  PAGE = "Page",
   ALL = "all",
 }

@@ -44,7 +44,11 @@ export class PermissionModel extends AppModel<PermissionModel> {
     if (!condition) return null;
     const parsedCondition = {};
     for (const [key, rawValue] of Object.entries(condition)) {
-      if (rawValue !== null && typeof rawValue === "object") {
+      if (
+        rawValue !== null &&
+        typeof rawValue === "object" &&
+        !Array.isArray(rawValue)
+      ) {
         const value = this.parseCondition(rawValue, variables);
         parsedCondition[key] = value;
         continue;
