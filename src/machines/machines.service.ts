@@ -70,7 +70,8 @@ export class MachinesService {
     );
     const processedMachine = authorizedMachines.map((machine) => {
       const allowedFields = permittedFieldsOf(ability, ACTIONS.READ, machine, {
-        fieldsFrom: () => Object.keys(this.machineModel.getAttributes()),
+        fieldsFrom: (rule) =>
+          rule.fields || Object.keys(this.machineModel.getAttributes()),
       });
       return pick(machine, allowedFields);
     });
@@ -101,11 +102,7 @@ export class MachinesService {
     ForbiddenError.from(ability).throwUnlessCan(ACTIONS.UPDATE, machine);
     Object.keys(dto).forEach((key) => {
       if (machine[key] === dto[key]) return;
-      ForbiddenError.from(ability).throwUnlessCan(
-        ACTIONS.UPDATE,
-        SUBJECTS.MACHINE,
-        key
-      );
+      ForbiddenError.from(ability).throwUnlessCan(ACTIONS.UPDATE, machine, key);
     });
     await machine.update(dto);
     return new MachineDto(machine);

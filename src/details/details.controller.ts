@@ -29,6 +29,9 @@ import {
   AppApiForbiddenResponse,
   ApiListResponse,
 } from "src/common/swagger/decorators";
+import { CheckPolicies, GetAbility } from "src/casl/decorator";
+import { AppAbility } from "src/casl/casl-ability.factory/casl-ability.factory";
+import { ACTIONS, SUBJECTS } from "src/casl/enum";
 
 @ApiBearerAuth()
 @AppApiUnauthorizedResponse()
@@ -40,33 +43,55 @@ export class DetailsController {
   constructor(private readonly detailsService: DetailsService) {}
 
   @Post()
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(ACTIONS.CREATE, SUBJECTS.DETAIL)
+  )
   @ApiCreatedResponse({ type: DetailDto })
   create(@Body() createDetailDto: CreateDetailDto) {
     return this.detailsService.create(createDetailDto);
   }
 
   @Get()
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(ACTIONS.READ, SUBJECTS.DETAIL)
+  )
   @ApiListResponse(DetailDto)
-  findAll(@Query() findDetailDto: FindDetailDto) {
-    return this.detailsService.findAll(findDetailDto);
+  findAll(
+    @Query() findDetailDto: FindDetailDto,
+    @GetAbility() ability: AppAbility
+  ) {
+    return this.detailsService.findAll(findDetailDto, ability);
   }
 
   @Get(":id")
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(ACTIONS.READ, SUBJECTS.DETAIL)
+  )
   @ApiOkResponse({ type: DetailDto })
-  findOne(@Param("id", ParseIntPipe) id: number) {
-    return this.detailsService.findOne(id);
+  findOne(
+    @Param("id", ParseIntPipe) id: number,
+    @GetAbility() ability: AppAbility
+  ) {
+    return this.detailsService.findOne(id, ability);
   }
 
   @Patch(":id")
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(ACTIONS.UPDATE, SUBJECTS.DETAIL)
+  )
   @ApiOkResponse({ type: DetailDto })
   update(
     @Param("id", ParseIntPipe) id: number,
-    @Body() updateDetailDto: UpdateDetailDto
+    @Body() updateDetailDto: UpdateDetailDto,
+    @GetAbility() ability: AppAbility
   ) {
-    return this.detailsService.update(id, updateDetailDto);
+    return this.detailsService.update(id, updateDetailDto, ability);
   }
 
   @Delete(":id")
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(ACTIONS.DELETE, SUBJECTS.DETAIL)
+  )
   @ApiOkResponse({ type: DetailDto })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.detailsService.remove(id);
