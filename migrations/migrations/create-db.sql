@@ -1,6 +1,26 @@
 
+-- -----------------------------------------------------
+-- Schema thesis
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema thesis
+-- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `thesis` DEFAULT CHARACTER SET utf8 ;
 USE `thesis` ;
+
+-- -----------------------------------------------------
+-- Table `thesis`.`Office`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `thesis`.`Office` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `description` VARCHAR(45) NULL,
+  `createdAt` DATETIME NULL,
+  `updatedAt` DATETIME NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
 
 -- -----------------------------------------------------
 -- Table `thesis`.`User`
@@ -14,9 +34,16 @@ CREATE TABLE IF NOT EXISTS `thesis`.`User` (
   `firstName` VARCHAR(45) NULL,
   `lastName` VARCHAR(45) NULL,
   `patronymic` VARCHAR(45) NULL,
+  `officeId` INT NULL,
   `createdAt` DATETIME NULL,
   `updatedAt` DATETIME NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  INDEX `fk_User_Office1_idx` (`officeId` ASC),
+  CONSTRAINT `fk_User_Office1`
+    FOREIGN KEY (`officeId`)
+    REFERENCES `thesis`.`Office` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -252,6 +279,7 @@ CREATE TABLE IF NOT EXISTS `thesis`.`Permission` (
   `subjectId` INT NOT NULL,
   `modality` TINYINT(1) NOT NULL DEFAULT 1,
   `action` VARCHAR(45) NOT NULL,
+  `condition` VARCHAR(200) NULL,
   `reason` VARCHAR(45) NULL,
   `createdAt` DATETIME NULL,
   `updatedAt` DATETIME NULL,
@@ -269,7 +297,7 @@ ENGINE = InnoDB;
 -- Table `thesis`.`PermissionField`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `thesis`.`PermissionField` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `permissionId` INT NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `createdAt` DATETIME NULL,
@@ -279,28 +307,8 @@ CREATE TABLE IF NOT EXISTS `thesis`.`PermissionField` (
   CONSTRAINT `fk_PermissionField_Permission1`
     FOREIGN KEY (`permissionId`)
     REFERENCES `thesis`.`Permission` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `thesis`.`PermissionCondition`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `thesis`.`PermissionCondition` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `permissionId` INT NOT NULL,
-  `key` VARCHAR(45) NOT NULL,
-  `value` VARCHAR(45) NOT NULL,
-  `createdAt` DATETIME NULL,
-  `updatedAt` DATETIME NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_PermissionCondition_Permission1_idx` (`permissionId` ASC),
-  CONSTRAINT `fk_PermissionCondition_Permission1`
-    FOREIGN KEY (`permissionId`)
-    REFERENCES `thesis`.`Permission` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -318,13 +326,13 @@ CREATE TABLE IF NOT EXISTS `thesis`.`RolePermission` (
   CONSTRAINT `fk_RolePermission_Role1`
     FOREIGN KEY (`roleId`)
     REFERENCES `thesis`.`Role` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_RolePermission_Permission1`
     FOREIGN KEY (`permissionId`)
     REFERENCES `thesis`.`Permission` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
@@ -347,8 +355,8 @@ CREATE TABLE IF NOT EXISTS `thesis`.`UserPermission` (
   CONSTRAINT `fk_UserPermission_Permission1`
     FOREIGN KEY (`permissionId`)
     REFERENCES `thesis`.`Permission` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
