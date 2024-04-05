@@ -20,7 +20,6 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
   const logger = app.get(Logger);
-  app.useLogger(logger);
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
   app.useGlobalPipes(
@@ -29,26 +28,6 @@ async function bootstrap() {
       transform: true,
     })
   );
-
-  signalsNames.forEach((signalName) =>
-    process.on(signalName, (signal) => {
-      logger.log(`Retrieved signal: ${signal}, application terminated`);
-      process.exit(0);
-    })
-  );
-
-  process.on("uncaughtException", (error: Error) => {
-    logger.error({ err: error });
-    process.exit(1);
-  });
-
-  process.on("unhandledRejection", (reason, promise) => {
-    logger.error(`Unhandled Promise Rejection, reason: ${reason}`);
-    promise.catch((err: Error) => {
-      logger.error({ err });
-      process.exit(1);
-    });
-  });
 
   if (configService.get("NODE_ENV") === "development") {
     const config = new DocumentBuilder()
@@ -72,7 +51,28 @@ async function bootstrap() {
     });
     SwaggerModule.setup("api", app, document);
   }
+  if (configService.get("NODE_ENV") === "production") {
+    app.useLogger(logger);
+    signalsNames.forEach((signalName) =>
+      process.on(signalName, (signal) => {
+        logger.log(`Retrieved signal: ${signal}, application terminated`);
+        process.exit(0);
+      })
+    );
 
+    process.on("uncaughtException", (error: Error) => {
+      logger.error({ err: error });
+      process.exit(1);
+    });
+
+    process.on("unhandledRejection", (reason, promise) => {
+      logger.error(`Unhandled Promise Rejection, reason: ${reason}`);
+      promise.catch((err: Error) => {
+        logger.error({ err });
+        process.exit(1);
+      });
+    });
+  }
   await app.listen(configService.get("APP_PORT"));
 }
 bootstrap();
