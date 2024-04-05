@@ -28,7 +28,7 @@ import { UserPermissionModel } from "./users/model";
 import { RolePermissionModel } from "./roles/model";
 import { PermissionFieldModel } from "./permission-fields/model";
 import { SubjectModel } from "./subjects/model";
-import { OfficeModel } from "./pages copy/model";
+import { OfficeModel } from "./offices/model";
 import { AddressesModule } from "./addresses/addresses.module";
 import { OrdersModule } from "./orders/orders.module";
 import { PoliciesGuard } from "./casl/guard";
@@ -42,7 +42,7 @@ import { PermissionFieldsModule } from "./permission-fields/permission-fields.mo
 import { PermissionsModule } from "./permissions/permissions.module";
 import { SubjectsModule } from "./subjects/subjects.module";
 import { PagesModule } from "./pages/pages.module";
-import { OfficesModule } from "./pages copy/offices.module";
+import { OfficesModule } from "./offices/offices.module";
 import { PageModel } from "./pages/model";
 
 @Module({
