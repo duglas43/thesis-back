@@ -25,14 +25,14 @@ import { AbilityRuleDto } from "src/casl/dto";
                 level: "trace",
                 target: "pino/file",
                 options: {
-                  destination: "logs.json",
+                  destination: "logs/logs.json",
                 },
               },
               {
                 level: "error",
                 target: "pino/file",
                 options: {
-                  destination: "errors.json",
+                  destination: "logs/errors.json",
                 },
               },
             ],
