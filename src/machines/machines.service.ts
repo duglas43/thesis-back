@@ -94,7 +94,11 @@ export class MachinesService {
   async findOne(id: number, ability: AppAbility) {
     const machine = await this.machineModel.findByPkOrThrow(id);
     ForbiddenError.from(ability).throwUnlessCan(ACTIONS.READ, machine);
-    return new MachineDto(machine);
+    const allowedFields = permittedFieldsOf(ability, ACTIONS.READ, machine, {
+      fieldsFrom: (rule) =>
+        rule.fields || Object.keys(this.machineModel.getAttributes()),
+    });
+    return new MachineDto(pick(machine, allowedFields));
   }
 
   async update(id: number, dto: UpdateMachineDto, ability: AppAbility) {
