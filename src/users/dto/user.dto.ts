@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { LANGUAGES } from "../enum";
+import { RoleDto } from "src/roles/dto";
 
 export class UserDto {
   @ApiProperty()
@@ -29,6 +30,9 @@ export class UserDto {
   @ApiProperty()
   updatedAt: Date | null;
 
+  @ApiProperty()
+  roles: RoleDto[];
+
   constructor(model: Partial<UserDto>) {
     this.id = model?.id;
     this.email = model?.email;
@@ -39,5 +43,6 @@ export class UserDto {
     this.officeId = model?.officeId;
     this.createdAt = model?.createdAt;
     this.updatedAt = model?.updatedAt;
+    this.roles = model?.roles;
   }
 }
